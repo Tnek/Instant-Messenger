@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-
-
 class Token(object):
     def __init__(self, label, initial_value = ""):
         self.stack = list(initial_value)
@@ -11,21 +9,32 @@ class Token(object):
     def __repr__(self):
         return "".join(self.stack) + " " + self.label
 
+separators = { 
+    ":":"COLON",
+    "\n":"LINEBREAK",
+    ",":"COMMA",
+    '"':"QUOTE",
+    "<":"LABRACKET",
+    ">":"RABRACKET",
+    "?":"QUESTION",
+    "=":"EQUALS",
+    "{":"LBRACKET",
+    "}":"RBRACKET",
+    ";":"SEMICOLON",
+    "@":"AT",
+    "&":"AMPERSAND",
+}
 
-seperators = { ":":"COLON",
-        "\n":"LINEBREAK",
-        ",":"COMMA",
-        }
 class Tokenizer(object):
     def __init__(self):
         self.cur_token = Token("WORD")
         self.tokens = []
 
     def add_char(self, c):
-        if c in seperators:
+        if c in separators:
             self.cur_token.label = "WORD"
             self.tokens.append(self.cur_token)
-            self.tokens.append(Token(tokens[c], c))
+            self.tokens.append(Token(separators[c], c))
             self.cur_token = Token("WORD")
         elif c == " ":
             self.cur_token.label = "WORD"
