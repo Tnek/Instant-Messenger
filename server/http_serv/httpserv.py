@@ -7,6 +7,11 @@ import traceback
 from .httpobjects import *
 from .http_parse import *
 
+# TODO: Support for
+# * Session/cookies
+# * Static files & url_for
+# * render_template?
+
 class HTTPServ(object):
     def __init__(self):
         self.routes = {}

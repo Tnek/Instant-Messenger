@@ -10,7 +10,10 @@ def parse(tokens):
         :param tokens: List of tokens to parse from
         :return: HTTPRequest object to fill
     """
-    req = HTTPRequest(tokens[0], tokens[1], tokens[2])
+    if tokens[2] == '\n':
+        req = HTTPRequest(tokens[0], tokens[1], "HTTP/1.0")
+    else:
+        req = HTTPRequest(tokens[0], tokens[1], tokens[2])
     _parse_headers(req, tokens, 4)
 
     return req
