@@ -12,7 +12,7 @@ class HTTPServ(object):
     def __init__(self):
         self.routes = {}
 
-    def add_handler(self, route, callback, methods={"GET"}):
+    def handle(self, route, callback, methods={"GET"}):
         self.routes[route] = (callback, methods)
 
     def handle_connection(self, client, addr):
