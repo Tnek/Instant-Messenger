@@ -4,9 +4,8 @@ import socket
 import sys
 import traceback
 
-from .tokenizer import Tokenizer
 from .httpobjects import *
-from .parser import *
+from .http_parse import *
 
 class HTTPServ(object):
     def __init__(self):
