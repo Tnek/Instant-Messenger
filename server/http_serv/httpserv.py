@@ -40,12 +40,8 @@ class HTTPServ(object):
         resp = HTTPResponse(data="404 Not Found", status_code=404, reason_phrase="Not Found")
         return resp
 
-    def listen_and_serve(self, serv_addr):
-        host, port = serv_addr.split(":")
-        if host == "":
-            self.host = "0.0.0.0"
-        if port == "http":
-            port = 80
+    def listen_and_serve(self, host="0.0.0.0", port=80):
+        self.host = host
         self.port = int(port)
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -62,10 +58,3 @@ class HTTPServ(object):
         finally: 
             sock.close()
 
-
-def test():
-    serv = HTTPServ()
-    serv.listen_and_serve(":" + sys.argv[1])
-
-if __name__ == "__main__":
-    test()
