@@ -30,12 +30,15 @@ class HTTPServ(object):
         client.send(resp.serialize().encode("utf-8"))
 
     def call_handler(self, req_obj):
+        resp = HTTPResponse()
         if req_obj.uri in self.routes:
             route = self.routes[req_obj.uri]
             if req_obj.method in route[1]:
-                return route[0](req_obj)
+                route[0](req_obj, resp)
+                return resp
 
-        return HTTPResponse(data="Not found", status_code=404, reason_phrase="Not Found")
+        resp = HTTPResponse(data="404 Not Found", status_code=404, reason_phrase="Not Found")
+        return resp
 
     def listen_and_serve(self, serv_addr):
         host, port = serv_addr.split(":")

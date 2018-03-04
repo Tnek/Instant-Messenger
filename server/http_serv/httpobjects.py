@@ -80,6 +80,12 @@ class HTTPResponse(HTTPObject):
         resp = [self.status_line(), self.export_headers(), self.data, "\r\n"]
         return "".join(resp)
 
+    def write(self, data):
+        """
+            Appends values to the data field.
+        """
+        self.data += data
+
 
 valid_methods = {"OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "CONNECT" }
 
