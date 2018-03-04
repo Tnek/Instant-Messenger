@@ -1,14 +1,6 @@
 #!/usr/bin/python
 from parser import Parser
 
-class Token(object):
-    def __init__(self, initial_value = ""):
-        self.stack = list(initial_value)
-    def add(self, c):
-        self.stack.append(c)
-    def __repr__(self):
-        return "".join(self.stack) 
-
 separators = { 
     ":":"COLON",
     "\n":"LF",
@@ -32,23 +24,23 @@ separators = {
 
 class Tokenizer(object):
     def __init__(self):
-        self.cur_token = Token()
+        self.cur_token = []
         self.tokens = []
         self.escape = False
 
     def add_char(self, c):
         if self.escape:
             if c == "'" or c == '"':
-                self.tokens.append(self.cur_token)
+                self.tokens.append("".join(self.cur_token))
                 self.tokens.append(c)
                 self.escape = False
             else:
-                self.cur_token.stack.append(c)
+                self.cur_token.append(c)
 
         elif c in separators:
-            if len(self.cur_token.stack) != 0:
-                self.tokens.append(self.cur_token)
-                self.cur_token = Token()
+            if len(self.cur_token) != 0:
+                self.tokens.append("".join(self.cur_token))
+                self.cur_token = []
 
             if c == "'" or c == '"':
                 self.escape = True
@@ -66,7 +58,7 @@ class Tokenizer(object):
             elif c != " ":
                 self.tokens.append(c)
         else:
-            self.cur_token.add(c)
+            self.cur_token.append(c)
 
         return True
 
