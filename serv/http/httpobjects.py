@@ -1,10 +1,32 @@
 #!/usr/bin/python3
+
 class HTTPObject(object):
-    def __init__(self, version):
+    """ Generic HTTP Object. """
+    def __init__(self, version="HTTP/1.1"):
+        """
+            :param version: Version of the HTTP protocol that we're implementing
+                            which defaults to HTTP/1.1 and probably should stay 
+                            that. 
+
+        """
         self.version = version
         self.headers = {}
         self.data = ""
+
     def export_headers(self):
+        """
+            Collects all headers together into a response string.
+
+            The BNF is as follows:
+                
+               message-header = field-name ":" [ field-value ]
+               field-name     = token
+               field-value    = *( field-content | LWS )
+               field-content  = <the OCTETs making up the field-value
+                                and consisting of either *TEXT or combinations
+                                of token, separators, and quoted-string>
+
+        """
         data_len = len(self.data)
         if data_len > 0:
             self.headers["Content-Length"] = [str(data_len)]
@@ -21,18 +43,19 @@ class HTTPObject(object):
 
 class HTTPResponse(HTTPObject):
     """
+        HTTP Object modeling an HTTP response.
 
-    From the rfc2616:
+        From rfc2616:
 
            After receiving and interpreting a request message, a server responds
-       with an HTTP response message.
+           with an HTTP response message.
 
-           Response      = Status-Line               ; Section 6.1
-                           *(( general-header        ; Section 4.5
-                            | response-header        ; Section 6.2
-                            | entity-header ) CRLF)  ; Section 7.1
-                           CRLF
-                           [ message-body ]          ; Section 7.2
+               Response      = Status-Line               ; Section 6.1
+                               *(( general-header        ; Section 4.5
+                                | response-header        ; Section 6.2
+                                | entity-header ) CRLF)  ; Section 7.1
+                               CRLF
+                               [ message-body ]          ; Section 7.2
 
     """
     def __init__(self, status_code, reason_phrase, version="HTTP/1.1", data=""):
