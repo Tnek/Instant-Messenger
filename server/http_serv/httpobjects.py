@@ -78,7 +78,6 @@ class HTTPResponse(HTTPObject):
             Build HTTP response string
         """
         resp = [self.status_line(), self.export_headers(), self.data, "\r\n"]
-        print(resp)
         return "".join(resp)
 
 
