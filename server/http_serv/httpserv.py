@@ -35,7 +35,7 @@ class HTTPServ(object):
             if req_obj.method in route[1]:
                 return route[0](req_obj)
 
-        return HTTPResponse(404, "Not Found", data="Not found")
+        return HTTPResponse(data="Not found", status_code=404, reason_phrase="Not Found")
 
     def listen_and_serve(self, serv_addr):
         host, port = serv_addr.split(":")

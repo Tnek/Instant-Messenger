@@ -1,12 +1,11 @@
 #!/usr/bin/python3
-
 from http_serv import HTTPServ, HTTPResponse
 
 def hello(req):
-    return HTTPResponse(200, "OK", data="Hello world!2")
+    return HTTPResponse("Hello world!2")
 
 def index(req):
-    return HTTPResponse(200, "OK", data="Hello world!")
+    return HTTPResponse("Hello world!")
 
 def main():
     serv = HTTPServ()

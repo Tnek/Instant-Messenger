@@ -58,7 +58,7 @@ class HTTPResponse(HTTPObject):
                                [ message-body ]          ; Section 7.2
 
     """
-    def __init__(self, status_code, reason_phrase, version="HTTP/1.1", data=""):
+    def __init__(self, data="", status_code=200, reason_phrase="OK", version="HTTP/1.1"):
         super().__init__(version)
         self.status_code = status_code
         self.reason_phrase = reason_phrase
