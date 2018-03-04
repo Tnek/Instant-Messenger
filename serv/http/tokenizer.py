@@ -1,5 +1,5 @@
-#!/usr/bin/python
-from parser import Parser
+#!/usr/bin/python3
+from parser import *
 
 separators = { 
     ":":"COLON",
@@ -14,7 +14,6 @@ separators = {
     "}":"RBR",
     ";":"SEMI",
     "@":"AT",
-    "&":"AMP",
     "\r":"CR",
     "\r\n":"CLRF",
     " ":"SPACE",
@@ -31,8 +30,9 @@ class Tokenizer(object):
     def add_char(self, c):
         if self.escape:
             if c == "'" or c == '"':
+                self.cur_token.append(c)
                 self.tokens.append("".join(self.cur_token))
-                self.tokens.append(c)
+                self.cur_token = []
                 self.escape = False
             else:
                 self.cur_token.append(c)
@@ -44,13 +44,17 @@ class Tokenizer(object):
 
             if c == "'" or c == '"':
                 self.escape = True
+                self.cur_token.append(c)
+                return True
 
             if c == '\n':
                 if self.tokens[-1] == '\r':
                     self.tokens.pop()
                     c = "\r\n"
+                    if self.tokens[-1] == "\r\n":
+                        return False
 
-                if self.tokens[-1] == "\r\n" or self.tokens[-1] == '\n':
+                if self.tokens[-1] == '\n':
                     return False
                 else:
                     self.tokens.append(c)
@@ -61,11 +65,10 @@ class Tokenizer(object):
             self.cur_token.append(c)
 
         return True
-
    
     def tokenize_buf(self, buf):
         for i in buf:
-            if not self.add_char(i):
+            if not self.add_char(chr(i)):
                 return False
         return True
 
@@ -73,7 +76,8 @@ class Tokenizer(object):
         return map(str, self.tokens)
 
     def export_tokens(self):
-        return map(str, self.tokens)
+        return list(map(str, self.tokens))
+
 
 def test():
     with open("tests/httpsample2", "r") as FILE:
@@ -84,8 +88,12 @@ def test():
     for c in a:
         if not t_test.add_char(c):
             break
+    #print(t_test.export_tokens())
+    httpobj = parse(t_test.export_tokens())
+    print(httpobj.headers)
 
-    print(t_test.export_tokens())
+    for i in httpobj.headers:
+        print("%s -> %s" %(i, httpobj.headers[i]))
 
 if __name__ == "__main__":
     test()
