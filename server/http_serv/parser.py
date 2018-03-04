@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from httpobjects import *
+from .httpobjects import *
 
 def parse(tokens):
     """

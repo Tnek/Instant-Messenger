@@ -4,9 +4,9 @@ import socket
 import sys
 import traceback
 
-from tokenizer import Tokenizer
-from httpobjects import *
-import parser
+from .tokenizer import Tokenizer
+from .httpobjects import *
+from .parser import *
 
 class HTTPServ(object):
     def __init__(self):
@@ -22,7 +22,7 @@ class HTTPServ(object):
         while tokenizer.tokenize_buf(buf):
             buf = client.recv(1024)
         
-        obj = parser.parse(tokenizer.export_tokens())
+        obj = parse(tokenizer.export_tokens())
 
         if "Content-Length" in obj.headers:
             obj.data = client.recv(obj.headers["Content-Length"])
