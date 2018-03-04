@@ -2,16 +2,12 @@
 from parser import Parser
 
 class Token(object):
-    def __init__(self, label, initial_value = ""):
+    def __init__(self, initial_value = ""):
         self.stack = list(initial_value)
-        self.label = label
     def add(self, c):
         self.stack.append(c)
     def __repr__(self):
-        if self.label == "WORD":
-            return "".join(self.stack) #+ " " + self.label
-        else:
-            return self.label
+        return "".join(self.stack) 
 
 separators = { 
     ":":"COLON",
@@ -29,39 +25,52 @@ separators = {
     "&":"AMP",
     "\r":"CR",
     "\r\n":"CLRF",
+    " ":"SPACE",
+    "'":"SQUOTE",
+    '"':"DQUOTE"
 }
 
 class Tokenizer(object):
     def __init__(self):
-        self.cur_token = Token("WORD")
+        self.cur_token = Token()
         self.tokens = []
+        self.escape = False
 
     def add_char(self, c):
-        if c in separators:
-            self.cur_token.label = "WORD"
+        if self.escape:
+            if c == "'" or c == '"':
+                self.tokens.append(self.cur_token)
+                self.tokens.append(c)
+                self.escape = False
+            else:
+                self.cur_token.stack.append(c)
+
+        elif c in separators:
             if len(self.cur_token.stack) != 0:
                 self.tokens.append(self.cur_token)
+                self.cur_token = Token()
 
-            if c == "\n" and self.tokens[-1].label == "CR":
-                self.tokens.pop()
-                if self.tokens[-1].label == "CLRF":
+            if c == "'" or c == '"':
+                self.escape = True
+
+            if c == '\n':
+                if self.tokens[-1] == '\r':
+                    self.tokens.pop()
+                    c = "\r\n"
+
+                if self.tokens[-1] == "\r\n" or self.tokens[-1] == '\n':
                     return False
+                else:
+                    self.tokens.append(c)
 
-                c = "\r\n"
-
-            self.tokens.append(Token(separators[c], c))
-            self.cur_token = Token("WORD")
-        elif c == " ":
-            self.cur_token.label = "WORD"
-            if len(self.cur_token.stack) != 0:
-                self.tokens.append(self.cur_token)
-
-            self.cur_token = Token("WORD")
-
+            elif c != " ":
+                self.tokens.append(c)
         else:
             self.cur_token.add(c)
+
         return True
-    
+
+   
     def tokenize_buf(self, buf):
         for i in buf:
             if not self.add_char(i):
@@ -69,19 +78,22 @@ class Tokenizer(object):
         return True
 
     def __iter__(self):
-        return iter(self.tokens)
-    
+        return map(str, self.tokens)
+
+    def export_tokens(self):
+        return map(str, self.tokens)
+
 def test():
-    with open("tests/httpsample", "r") as FILE:
+    with open("tests/httpsample2", "r") as FILE:
         a = FILE.read()
     print(a)
 
     t_test = Tokenizer()
     for c in a:
-        t_test.add_char(c)
+        if not t_test.add_char(c):
+            break
 
-    for t in t_test:
-        print("%s" %(t))
+    print(t_test.export_tokens())
 
 if __name__ == "__main__":
     test()
