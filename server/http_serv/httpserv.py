@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 import socket
+socket.setdefaulttimeout(5)
+
 import sys
 import traceback
 import threading
@@ -74,9 +76,16 @@ class HTTPServ(object):
             sock.listen(5)
 
             while True:
-                client, addr = sock.accept()
-                conn = ConnectionHandler(self, client, addr)
-                conn.start()
+                try:
+                    client, addr = sock.accept()
+                    conn = ConnectionHandler(self, client, addr)
+                    conn.start()
+
+                except socket.timeout:
+                    pass
+                finally:
+                    client.close()
+
 
         except Exception:
             traceback.print_exc()
