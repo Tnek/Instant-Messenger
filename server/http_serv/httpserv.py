@@ -82,9 +82,13 @@ class HTTPServ(object):
             sock.listen(5)
 
             while True:
-                client, addr = sock.accept()
-                conn = ConnectionHandler(self, client, addr)
-                conn.start()
+                try:
+                    client, addr = sock.accept()
+                    conn = ConnectionHandler(self, client, addr)
+                    conn.start()
+                except socket.timeout:
+                    client.close()
+                    conn.join()
 
         except Exception:
             traceback.print_exc()
