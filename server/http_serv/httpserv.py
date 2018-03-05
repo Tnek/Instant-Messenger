@@ -20,19 +20,24 @@ class HTTPServ(object):
         self.routes[route] = (callback, methods)
 
     def handle_connection(self, client, addr):
-        tokenizer = Tokenizer()
-        buf = client.recv(1024)
-
-        while tokenizer.tokenize_buf(buf):
+        persistent = True
+        while persistent:
+            tokenizer = Tokenizer()
             buf = client.recv(1024)
-        
-        obj = parse(tokenizer.export_tokens())
 
-        if "Content-Length" in obj.headers:
-            obj.data = client.recv(obj.headers["Content-Length"])
+            while tokenizer.tokenize_buf(buf):
+                buf = client.recv(1024)
+            
+            obj = parse(tokenizer.export_tokens())
 
-        resp = self.call_handler(obj)
-        client.send(resp.serialize().encode("utf-8"))
+            if "Content-Length" in obj.headers:
+                obj.data = client.recv(obj.headers["Content-Length"])
+
+            resp = self.call_handler(obj)
+            client.send(resp.serialize().encode("utf-8"))
+
+            if "Connection" in resp.headers and resp.headers["Connection"] == "close":
+                persistent = False
 
     def call_handler(self, req_obj):
         resp = HTTPResponse()
