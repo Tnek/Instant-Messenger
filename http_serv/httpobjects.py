@@ -29,12 +29,16 @@ class HTTPObject(object):
         """
         data_len = len(self.data)
         if data_len > 0:
-            self.headers["Content-Length"] = [str(data_len)]
+            self.headers["Content-Length"] = data_len
 
         header_resp = []
 
         for header in self.headers:
-            header_val = "".join(self.headers[header])
+            header_val = self.headers[header]
+            if type(header_val) == list:
+                header_val = "".join(self.headers[header])
+            else:
+                header_val = str(header_val)
             header_resp.append("%s: %s\r\n" %(header, header_val))
 
         header_resp.append("\r\n")
@@ -62,7 +66,9 @@ class HTTPResponse(HTTPObject):
         super().__init__(version)
         self.status_code = status_code
         self.reason_phrase = reason_phrase
+        self.cookies = {}
         self.data = data
+        self.headers["Content-Type"] = "text/html; charset=utf-8"
 
     def status_line(self):
         """
@@ -73,18 +79,29 @@ class HTTPResponse(HTTPObject):
         return "%s %s %s\r\n" %(self.version, self.status_code, self.reason_phrase)
 
 
-    def serialize(self):
-        """
-            Build HTTP response string
-        """
-        resp = [self.status_line(), self.export_headers(), self.data, "\r\n"]
-        return "".join(resp)
-
     def write(self, data):
         """
             Appends values to the data field.
         """
         self.data += data
+
+    def set_cookie(self, key, value):
+        # May want to do checking for invalid characters for cookies here.
+        self.cookies[key] = value
+
+    def export_cookies(self):
+        if len(self.cookies) > 0:
+            return "Set-Cookie: " + ";".join("%s=%s" %(cookie, 
+                self.cookies[cookie]) for cookie in self.cookies) + "\r\n"
+        else:
+            return ""
+
+    def serialize(self):
+        """
+            Build HTTP response string
+        """
+        resp = [self.status_line(), self.export_cookies(), self.export_headers(), self.data, "\r\n"]
+        return "".join(resp)
 
 
 valid_methods = {"OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "CONNECT" }
@@ -97,3 +114,6 @@ class HTTPRequest(HTTPObject):
 
         self.method = method
         self.uri = uri
+        self.cookies = {}
+
+

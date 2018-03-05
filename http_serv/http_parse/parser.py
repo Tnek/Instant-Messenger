@@ -15,6 +15,8 @@ def parse(tokens):
     else:
         req = HTTPRequest(tokens[0], tokens[1], tokens[2])
     _parse_headers(req, tokens, 4)
+    if "Cookie" in req.headers:
+        _parse_cookies(req, req.headers["Cookie"])
 
     return req
     
@@ -47,4 +49,39 @@ def _check_header(header):
     if header[1] != ':':
         return False
     return True
+
+def _parse_cookies(req_obj, cookie_tokens):
+    """
+        Parses cookies
+
+        BNF (rfc6265) is:
+           OWS            = *( [ obs-fold ] WSP )
+                            ; "optional" whitespace
+           obs-fold       = CRLF
+
+           cookie-header = "Cookie:" OWS cookie-string OWS
+           cookie-string = cookie-pair *( ";" SP cookie-pair )
+
+        :param req_obj: HTTPRequest object to fill cookies
+        :param tokens: List of cookie tokens to parse from
+    """
+    builder = []
+    cookie_token_built = []
+
+    for t in cookie_tokens: 
+        if t == ";":
+            cookie_token_built.append(builder)
+            builder = []
+        else:
+            builder.append(t)
+
+    if len(builder) > 0:
+        cookie_token_built.append(builder)
+
+    for cookie_t in cookie_token_built:
+        lval = []
+        for t in range(len(cookie_t)):
+            if cookie_t[t] == "=":
+                req_obj.cookies["".join(cookie_t[:t])] = "".join(cookie_t[t+1:])
+                continue
 
