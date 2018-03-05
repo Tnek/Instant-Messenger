@@ -3,6 +3,7 @@
 import socket
 import sys
 import traceback
+import threading
 
 from .httpobjects import *
 from .http_parse import *
@@ -12,29 +13,30 @@ from .http_parse import *
 # * Static files & url_for
 # * render_template?
 
-class HTTPServ(object):
-    def __init__(self):
-        self.routes = {}
+class ConnectionHandler(threading.Thread):
+    def __init__(self, httpserv, client, addr):
+        threading.Thread.__init__(self)
+        self.client = client
+        self.addr = addr
+        self.httpserv = httpserv
 
-    def handle(self, route, callback, methods={"GET"}):
-        self.routes[route] = (callback, methods)
-
-    def handle_connection(self, client, addr):
+    def run(self):
         persistent = True
+
         while persistent:
             tokenizer = Tokenizer()
-            buf = client.recv(1024)
+            buf = self.client.recv(1024)
 
             while tokenizer.tokenize_buf(buf):
-                buf = client.recv(1024)
+                buf = self.client.recv(1024)
             
             obj = parse(tokenizer.export_tokens())
 
             if "Content-Length" in obj.headers:
-                obj.data = client.recv(obj.headers["Content-Length"])
+                obj.data = self.client.recv(obj.headers["Content-Length"])
 
-            resp = self.call_handler(obj)
-            client.send(resp.serialize().encode("utf-8"))
+            resp = self.httpserv.call_handler(obj)
+            self.client.send(resp.serialize().encode("utf-8"))
 
             if resp.version == "HTTP/1.1":
                 if "Connection" in resp.headers and resp.headers["Connection"] == "close":
@@ -42,6 +44,14 @@ class HTTPServ(object):
             else:  # older HTTP versions
                 if "Connection" in resp.headers and resp.headers["Connection"] != "keep-alive":
                     persistent = False
+
+
+class HTTPServ(object):
+    def __init__(self):
+        self.routes = {}
+
+    def handle(self, route, callback, methods={"GET"}):
+        self.routes[route] = (callback, methods)
 
     def call_handler(self, req_obj):
         resp = HTTPResponse()
@@ -65,7 +75,8 @@ class HTTPServ(object):
 
             while True:
                 client, addr = sock.accept()
-                self.handle_connection(client, addr)
+                conn = ConnectionHandler(self, client, addr)
+                conn.start()
 
         except Exception:
             traceback.print_exc()
