@@ -3,7 +3,7 @@
 import os
 import os.path
 import socket
-#socket.setdefaulttimeout(5)
+socket.setdefaulttimeout(5)
 
 import mimetypes
 import sys
@@ -85,8 +85,6 @@ class ConnectionHandler(threading.Thread):
 
         except socket.timeout:
             pass
-        except:
-            traceback.print_exc()
         finally:
             self.client.close()
 
@@ -151,13 +149,12 @@ class HTTPServ(object):
             sock.listen(5)
 
             while True:
-                client, addr = sock.accept()
                 try:
+                    client, addr = sock.accept()
                     conn = ConnectionHandler(self, client, addr)
                     conn.start()
                 except socket.timeout:
-                    client.close()
-                    conn.join()
+                    pass
 
         except Exception:
             traceback.print_exc()

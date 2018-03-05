@@ -80,6 +80,9 @@ class HTTPResponse(HTTPObject):
         self.data = data
         self.headers["Content-Type"] = "text/html; charset=utf-8"
 
+        #: Close by default so it's harder to write memory leaks.
+        self.headers["Connection"] = "close"
+
     def status_line(self):
         """
             BNF is as follows: 
