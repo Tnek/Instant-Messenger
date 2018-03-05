@@ -41,6 +41,7 @@ class ConnectionHandler(threading.Thread):
                     obj.data = self.client.recv(obj.headers["Content-Length"])
 
                 resp = self.httpserv.call_handler(obj)
+                print(resp.serialize())
                 self.client.send(resp.serialize().encode("utf-8"))
 
                 if resp.version == "HTTP/1.1":
