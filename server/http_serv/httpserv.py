@@ -47,6 +47,8 @@ class ConnectionHandler(threading.Thread):
                 if "Connection" in resp.headers and resp.headers["Connection"] != "keep-alive":
                     persistent = False
 
+        client.close()
+
 
 class HTTPServ(object):
     def __init__(self):
@@ -82,9 +84,7 @@ class HTTPServ(object):
                     conn.start()
 
                 except socket.timeout:
-                    pass
-                finally:
-                    client.close()
+                    conn.join()
 
 
         except Exception:
