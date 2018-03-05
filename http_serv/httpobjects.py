@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import os.path
 
 class HTTPObject(object):
     """ Generic HTTP Object. """
@@ -12,6 +13,11 @@ class HTTPObject(object):
         self.version = version
         self.headers = {}
         self.data = ""
+
+        #: See :file httpserv.py:`HTTPServ.serve_static` for why this exists
+        #: if is_static is set, then .data is a path to the data rather than the
+        #: data itself.
+        self.is_static = False
 
     def export_headers(self):
         """
@@ -27,9 +33,13 @@ class HTTPObject(object):
                                 of token, separators, and quoted-string>
 
         """
-        data_len = len(self.data)
-        if data_len > 0:
-            self.headers["Content-Length"] = data_len
+        if self.is_static:
+            self.headers["Content-Length"] = os.path.getsize(self.data)
+
+        else:
+            data_len = len(self.data)
+            if data_len > 0:
+                self.headers["Content-Length"] = data_len
 
         header_resp = []
 
@@ -100,7 +110,11 @@ class HTTPResponse(HTTPObject):
         """
             Build HTTP response string
         """
-        resp = [self.status_line(), self.export_cookies(), self.export_headers(), self.data, "\r\n"]
+        resp = [self.status_line(), self.export_cookies(), self.export_headers()]
+
+        if not self.is_static:
+            resp.append(self.data)
+        resp.append("\r\n")
         return "".join(resp)
 
 
