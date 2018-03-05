@@ -1,10 +1,9 @@
 #!/usr/bin/python3
 
+import datetime
 import os
 import os.path
 import socket
-socket.setdefaulttimeout(5)
-
 import mimetypes
 import sys
 import traceback
@@ -14,16 +13,11 @@ import traceback
 from .httpobjects import *
 from .http_parse import *
 
+socket.setdefaulttimeout(5)
+
 # TODO: Support for
-# * Static files & url_for
 # * Sessioning
 # * render_template?
-
-def epoch_to_httpdate(self, epoch):
-    pass
-
-def httpdate_to_epoch(self, httpdate):
-    pass
 
 class ConnectionHandler(threading.Thread):
     def __init__(self, httpserv, client, addr):
@@ -87,6 +81,12 @@ class ConnectionHandler(threading.Thread):
             pass
         finally:
             self.client.close()
+
+def epoch_to_httpdate(self, epoch):
+    pass
+
+def httpdate_to_epoch(self, httpdate):
+    pass
 
 def _check_conditions(req_obj, real_path):
     last_modified = os.path.getmtime(real_path)
