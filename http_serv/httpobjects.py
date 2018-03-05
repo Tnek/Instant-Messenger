@@ -29,12 +29,16 @@ class HTTPObject(object):
         """
         data_len = len(self.data)
         if data_len > 0:
-            self.headers["Content-Length"] = [str(data_len)]
+            self.headers["Content-Length"] = data_len
 
         header_resp = []
 
         for header in self.headers:
-            header_val = "".join(self.headers[header])
+            header_val = self.headers[header]
+            if type(header_val) == list:
+                header_val = "".join(self.headers[header])
+            else:
+                header_val = str(header_val)
             header_resp.append("%s: %s\r\n" %(header, header_val))
 
         header_resp.append("\r\n")
@@ -64,6 +68,7 @@ class HTTPResponse(HTTPObject):
         self.reason_phrase = reason_phrase
         self.cookies = {}
         self.data = data
+        self.headers["Content-Type"] = "text/html; charset=utf-8"
 
     def status_line(self):
         """
