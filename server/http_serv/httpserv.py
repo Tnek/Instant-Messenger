@@ -36,8 +36,12 @@ class HTTPServ(object):
             resp = self.call_handler(obj)
             client.send(resp.serialize().encode("utf-8"))
 
-            if "Connection" in resp.headers and resp.headers["Connection"] == "close":
-                persistent = False
+            if resp.version == "HTTP/1.1":
+                if "Connection" in resp.headers and resp.headers["Connection"] == "close":
+                    persistent = False
+            else:  # older HTTP versions
+                if "Connection" in resp.headers and resp.headers["Connection"] != "keep-alive":
+                    persistent = False
 
     def call_handler(self, req_obj):
         resp = HTTPResponse()
