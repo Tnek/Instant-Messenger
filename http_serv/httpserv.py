@@ -34,6 +34,8 @@ class ConnectionHandler(threading.Thread):
                     buf = self.client.recv(1024)
                 
                 obj = parse(tokenizer.export_tokens())
+                print(tokenizer.export_tokens())
+                print(obj.cookies)
 
                 if "Content-Length" in obj.headers:
                     obj.data = self.client.recv(obj.headers["Content-Length"])
@@ -49,6 +51,8 @@ class ConnectionHandler(threading.Thread):
                         persistent = False
 
         except socket.timeout:
+            pass
+        except socket.error:
             pass
         finally:
             self.client.close()

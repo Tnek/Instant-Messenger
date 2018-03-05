@@ -97,3 +97,6 @@ class HTTPRequest(HTTPObject):
 
         self.method = method
         self.uri = uri
+        self.cookies = {}
+
+
