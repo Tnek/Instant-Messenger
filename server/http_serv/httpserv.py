@@ -23,31 +23,35 @@ class ConnectionHandler(threading.Thread):
         self.httpserv = httpserv
 
     def run(self):
-        persistent = True
+        try:
+            persistent = True
 
-        while persistent:
-            tokenizer = Tokenizer()
-            buf = self.client.recv(1024)
-
-            while tokenizer.tokenize_buf(buf):
+            while persistent:
+                tokenizer = Tokenizer()
                 buf = self.client.recv(1024)
-            
-            obj = parse(tokenizer.export_tokens())
 
-            if "Content-Length" in obj.headers:
-                obj.data = self.client.recv(obj.headers["Content-Length"])
+                while tokenizer.tokenize_buf(buf):
+                    buf = self.client.recv(1024)
+                
+                obj = parse(tokenizer.export_tokens())
 
-            resp = self.httpserv.call_handler(obj)
-            self.client.send(resp.serialize().encode("utf-8"))
+                if "Content-Length" in obj.headers:
+                    obj.data = self.client.recv(obj.headers["Content-Length"])
 
-            if resp.version == "HTTP/1.1":
-                if "Connection" in resp.headers and resp.headers["Connection"] == "close":
-                    persistent = False
-            else:  # older HTTP versions
-                if "Connection" in resp.headers and resp.headers["Connection"] != "keep-alive":
-                    persistent = False
+                resp = self.httpserv.call_handler(obj)
+                self.client.send(resp.serialize().encode("utf-8"))
 
-        client.close()
+                if resp.version == "HTTP/1.1":
+                    if "Connection" in resp.headers and resp.headers["Connection"] == "close":
+                        persistent = False
+                else:  # older HTTP versions
+                    if "Connection" in resp.headers and resp.headers["Connection"] != "keep-alive":
+                        persistent = False
+
+        except socket.timeout:
+            pass
+        finally:
+            self.client.close()
 
 
 class HTTPServ(object):
@@ -78,14 +82,9 @@ class HTTPServ(object):
             sock.listen(5)
 
             while True:
-                try:
-                    client, addr = sock.accept()
-                    conn = ConnectionHandler(self, client, addr)
-                    conn.start()
-
-                except socket.timeout:
-                    conn.join()
-
+                client, addr = sock.accept()
+                conn = ConnectionHandler(self, client, addr)
+                conn.start()
 
         except Exception:
             traceback.print_exc()
