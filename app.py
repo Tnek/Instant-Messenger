@@ -7,7 +7,8 @@ from views import *
 
 def main():
     app = HTTPServ()
-    app.handle("/", index)
+    app.handle("/", index, methods=["GET", "POST"])
+    app.handle("/messages", messages, methods=["GET", "POST"])
 
     port = 8080
     if len(sys.argv) > 1:

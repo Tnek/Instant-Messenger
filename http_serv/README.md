@@ -4,7 +4,7 @@ http_serv is an HTTP server and web application framework.
 
 ## A Simple Example
 
-```
+```python
 #!/usr/bin/python3
 from http_serv import HTTPServ
 

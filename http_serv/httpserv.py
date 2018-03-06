@@ -42,7 +42,7 @@ class ConnectionHandler(threading.Thread):
                 print(obj.cookies)
 
                 if "Content-Length" in obj.headers:
-                    obj.data = self.client.recv(obj.headers["Content-Length"])
+                    obj.data = self.client.recv(int(obj.headers["Content-Length"][0]))
 
                 resp = self.httpserv.call_handler(obj)
 
