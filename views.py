@@ -2,17 +2,17 @@
 
 def index(req, resp):
     if req.method == "GET":
-        if "user" in req.cookies:
+        if "username" in req.cookies:
             resp.redirect("/messages")
         resp.send_file("./static/html/index.html")
 
     elif req.method == "POST":
-        if "asdf" in req.form:
-            resp.set_cookie("user", req.form["user"])
+        if "username" in req.form:
+            resp.redirect("/messages")
+            resp.set_cookie("username", req.form["username"])
 
 def messages(req, resp):
-    if req.method == "GET":
-#        if not "user" in req.cookies:
-#            resp.redirect("/")
-
-        resp.send_file("./static/html/messenger.html")
+    if not "username" in req.cookies:
+        resp.redirect("/")
+        return
+    resp.send_file("./static/html/messenger.html")

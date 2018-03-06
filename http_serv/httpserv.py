@@ -42,7 +42,13 @@ class ConnectionHandler(threading.Thread):
                 print(obj.cookies)
 
                 if "Content-Length" in obj.headers:
-                    obj.data = self.client.recv(int(obj.headers["Content-Length"][0]))
+                    content_len = int(obj.headers["Content-Length"][0]) - len(tokenizer.extra_chars)
+                    extra = ""
+                    if content_len > 0:
+                        extra = self.client.recv(content_len).decode("utf-8")
+                    obj.data = "".join(tokenizer.extra_chars) + extra
+                    if obj.method == "POST":
+                        parse_post(obj)
 
                 resp = self.httpserv.call_handler(obj)
 

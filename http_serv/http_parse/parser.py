@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from ..httpobjects import *
+from .tokenizer import Tokenizer
 
 def parse(tokens):
     """
@@ -84,4 +85,10 @@ def _parse_cookies(req_obj, cookie_tokens):
             if cookie_t[t] == "=":
                 req_obj.cookies["".join(cookie_t[:t])] = "".join(cookie_t[t+1:])
                 continue
+
+def parse_post(req_obj):
+    fields = req_obj.data.split("&")
+    for field in fields:
+        field_s = field.split("=")
+        req_obj.form[field_s[0]] = "=".join(field_s[1:])
 

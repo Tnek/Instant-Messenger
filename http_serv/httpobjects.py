@@ -14,8 +14,7 @@ class HTTPObject(object):
         self.headers = {}
         self.data = ""
 
-        #: See :file httpserv.py:`HTTPServ.serve_static` for why this exists
-        #: if is_static is set, then .data is a path to the data rather than the
+        #: If is_static is set, then .data is a path to the data rather than the
         #: data itself.
         self.is_static = False
 
@@ -163,4 +162,6 @@ class HTTPRequest(HTTPObject):
         self.method = method
         self.uri = uri
         self.cookies = {}
+        self.form = {}
+        self.args = {}
 
