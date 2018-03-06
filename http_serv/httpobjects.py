@@ -96,6 +96,8 @@ class HTTPResponse(HTTPObject):
         """
             Appends values to the data field.
         """
+        if self.is_static:
+            raise TypeError("Static HTTPResponses cannot be written to.") 
         self.data += data
 
     def set_cookie(self, key, value):
@@ -120,6 +122,35 @@ class HTTPResponse(HTTPObject):
         resp.append("\r\n")
         return "".join(resp)
 
+    def send_file(self, directory):
+        """
+            Changes HTTPRequest object to send a static file. This sets the data
+            field to the directory of the file instead of containing the response
+            itself. It is up to the server to actually read this file from this 
+            directory. 
+        """
+        self.is_static = True
+        self.data = directory
+
+    def redirect(self, new_uri):
+        """
+            Changes HTTPRequest object to be a redirect to a new address.
+
+            :param new_uri: URI of new object - RFC7231 states that we can have
+                            relative uris here so we are following that instead of
+                            the older RFC2616.
+        """
+        self.status_code = 302
+        self.reason_phrase = "Found"
+        self.headers["Location"] = new_uri
+        self.data = '<HTML><HEAD><meta http-equiv="content-type"' \
+                    'content="text/html;charset=utf-8">\n' \
+                    '<TITLE>302 Moved</TITLE></HEAD><BODY>\n' \
+                    '<H1>302 Moved</H1>\n' \
+                    'The document has moved\n' \
+                    '<A HREF=%s">here</A>.\n' \
+                    '</BODY></HTML>' %(new_uri)
+
 
 valid_methods = {"OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "CONNECT" }
 
@@ -132,5 +163,4 @@ class HTTPRequest(HTTPObject):
         self.method = method
         self.uri = uri
         self.cookies = {}
-
 
