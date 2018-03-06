@@ -54,6 +54,16 @@ class HTTPObject(object):
         header_resp.append("\r\n")
         return "".join(header_resp) 
 
+    def send_file(self, directory):
+        """
+            Changes HTTPObject to represent a static file. This sets the data
+            field to the directory of the file instead of containing the response
+            itself. It is up to the server to actually read this file from this 
+            directory. 
+        """
+        self.is_static = True
+        self.data = directory
+
 
 class HTTPResponse(HTTPObject):
     """
@@ -121,16 +131,6 @@ class HTTPResponse(HTTPObject):
             resp.append(self.data)
         resp.append("\r\n")
         return "".join(resp)
-
-    def send_file(self, directory):
-        """
-            Changes HTTPRequest object to send a static file. This sets the data
-            field to the directory of the file instead of containing the response
-            itself. It is up to the server to actually read this file from this 
-            directory. 
-        """
-        self.is_static = True
-        self.data = directory
 
     def redirect(self, new_uri):
         """
