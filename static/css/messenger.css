@@ -16,11 +16,13 @@ body {
   width: 1010px;
   background: #444753;
   border-radius: 5px;
+  height: 722px;
 }
 
 .people-list {
   width: 260px;
   float: left;
+  border: 1px solid #C5DDEB;
 }
 .people-list .search {
   padding: 20px;
@@ -65,6 +67,7 @@ body {
   background: #F2F5F8;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
+  border: 1px solid #C5DDEB;
   color: #434651;
 }
 .chat .chat-header {
@@ -96,7 +99,7 @@ body {
   padding: 30px 30px 20px;
   border-bottom: 2px solid white;
   overflow-y: scroll;
-  height: 575px;
+  height: 480px;
 }
 .chat .chat-history .message-data {
   margin-bottom: 15px;
@@ -107,14 +110,14 @@ body {
 }
 .chat .chat-history .message {
   color: white;
-  padding: 18px 20px;
+  padding: 10px 15px;
   line-height: 26px;
-  font-size: 16px;
   border-radius: 7px;
-  margin-bottom: 30px;
+  margin-bottom: 15px;
   width: 90%;
   position: relative;
 }
+
 .chat .chat-history .message:after {
   bottom: 100%;
   left: 7%;
@@ -139,7 +142,7 @@ body {
   left: 93%;
 }
 .chat .chat-message {
-  padding: 30px;
+  padding: 25px;
 }
 .chat .chat-message textarea {
   width: 100%;
@@ -206,3 +209,4 @@ body {
   clear: both;
   height: 0;
 }
+
