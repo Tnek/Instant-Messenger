@@ -10,7 +10,6 @@ class HTTPObject(object):
                             that. 
 
         """
-
         self.version = version
         self.headers = {}
         self.data = StringBuffer()
@@ -48,15 +47,10 @@ class HTTPResponse(HTTPObject):
         self._main_resp = None
         self.headers["Content-Type"] = "text/html; charset=utf-8"
         #: Close by default so it's harder to write memory leaks.
-        self.headers["Connection"] = "close"
 
     def reset_data(self):
         self.data_len = 0
         self.data = StringBuffer()
-
-    def write(self, data):
-        self.data_len += len(data)
-        self.data.write(data)
 
     def export_statusline(self):
         return "%s %s %s\r\n" %(self.version, self.status_code, self.reason_phrase)
@@ -84,6 +78,10 @@ class HTTPResponse(HTTPObject):
             resp += self.data.read(nbytes - len(resp))
         return resp
 
+    def write(self, data):
+        self.data_len += len(data)
+        self.data.write(data)
+
     def close(self):
         pass
 
@@ -104,6 +102,7 @@ class HTTPResponse(HTTPObject):
         self.headers["Content-Type"] = mimetypes.guess_type(file_dir)[0]
         self.data = FileBuffer(file_dir)
         self.data_len = self.data.size()
+
 
 valid_methods = {"OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "CONNECT" }
 

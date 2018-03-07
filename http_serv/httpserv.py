@@ -3,6 +3,7 @@ import os
 import socket
 import sys
 import threading
+socket.setdefaulttimeout(10)
 
 from .httpobjects import HTTPResponse, HTTPRequest
 from .buffered_io import BufferedIO
@@ -36,6 +37,7 @@ class HTTPServ(object):
 
         resp.status_code = 404
         resp.reason_phrase = "Not Found"
+        resp.headers["Connection"] = "close"
         resp.write('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\n' \
                 '<title>404 Not Found</title>\n' \
                 '<h1>Not Found</h1>\n' \
@@ -46,44 +48,45 @@ class HTTPServ(object):
         persistent = True
 
         buf_sock = BufferedIO(sock.recv, sock.send)
-        while persistent:
-            req_line = buf_sock.read_until("\n").strip()
-            print("[%s:%s] - %s" %(addr[0], addr[1], req_line))
-            req_line = req_line.split(" ")
+        try:
+            while persistent:
+                req_line = buf_sock.read_until("\n").strip()
+                print("[%s:%s] - %s" %(addr[0], addr[1], req_line))
+                req_line = req_line.split(" ")
 
-            ver = "HTTP/1.0"
-            if len(req_line) > 2:
-                ver = req_line[2]
+                ver = "HTTP/1.0"
+                if len(req_line) > 2:
+                    ver = req_line[2]
 
-            req = HTTPRequest(method=req_line[0], uri=req_line[1], version=ver)
+                req = HTTPRequest(method=req_line[0], uri=req_line[1], version=ver)
 
-            cur = buf_sock.read_until("\n")
-            while cur != "\r\n" and cur != "\n":
-                cur_split = cur.strip().split(": ")
-                req.headers[cur_split[0]] = ": ".join(cur_split[1:])
                 cur = buf_sock.read_until("\n")
+                while cur != "\r\n" and cur != "\n":
+                    cur_split = cur.strip().split(": ")
+                    req.headers[cur_split[0]] = ": ".join(cur_split[1:])
+                    cur = buf_sock.read_until("\n")
 
-            req.parse_cookies()
+                req.parse_cookies()
 
-            if "Content-Length" in req.headers:
-                req.write(buf_sock.read(int(req.headers["Content-Length"])))
+                if "Content-Length" in req.headers:
+                    req.write(buf_sock.read(int(req.headers["Content-Length"])))
 
-            if req.method == "POST":
-                req.parse_post()
+                if req.method == "POST":
+                    req.parse_post()
 
-            resp = HTTPResponse(status_code = 200, reason_phrase="OK")
-            self.call_handler(req, resp)
+                resp = HTTPResponse(status_code = 200, reason_phrase="OK")
+                self.call_handler(req, resp)
 
-            buf_sock.buf_write(resp)
+                buf_sock.buf_write(resp)
 
-            if ver == "HTTP/1.1":
-                if "Connection" in req.headers and req.headers["Connection"] == "close":
-                    persistent = False
-            else:  # older HTTP versions
-                if not "Connection" in req.headers or req.headers["Connection"] != "keep-alive":
-                    persistent = False
-
-        sock.close()
+                if ver == "HTTP/1.1":
+                    if "Connection" in req.headers and req.headers["Connection"] == "close":
+                        persistent = False
+                else:  # older HTTP versions
+                    if not "Connection" in req.headers or req.headers["Connection"] != "keep-alive":
+                        persistent = False
+        except socket.timeout:
+            sock.close()
 
     def listen_and_serve(self, host="0.0.0.0", port=80):
         self.host = host
@@ -95,8 +98,10 @@ class HTTPServ(object):
         sock.listen(5)
 
         while True:
-            client, addr = sock.accept()
-
-            conn = threading.Thread(target=self._handle_req, args=(client,addr))
-            conn.start()
+            try:
+                client, addr = sock.accept()
+                conn = threading.Thread(target=self._handle_req, args=(client,addr))
+                conn.start()
+            except socket.timeout:
+                pass
 
