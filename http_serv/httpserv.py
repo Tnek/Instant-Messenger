@@ -1,169 +1,101 @@
 #!/usr/bin/python3
-
-import datetime
+import multiprocessing
 import os
-import os.path
 import socket
-import mimetypes
 import sys
-import traceback
-import threading
-import traceback
 
-from .httpobjects import *
-from .http_parse import *
-
-socket.setdefaulttimeout(5)
-
-# TODO: Support for
-# * Sessioning
-# * render_template?
-
-class ConnectionHandler(threading.Thread):
-    def __init__(self, httpserv, client, addr):
-        threading.Thread.__init__(self)
-        self.client = client
-        self.addr = addr
-        self.httpserv = httpserv
-
-    def run(self):
-        try:
-            persistent = True
-
-            while persistent:
-                tokenizer = Tokenizer()
-                buf = self.client.recv(1024)
-
-                while tokenizer.tokenize_buf(buf):
-                    buf = self.client.recv(1024)
-                
-                obj = parse(tokenizer.export_tokens())
-                print(tokenizer.export_tokens())
-                print(obj.cookies)
-
-                if "Content-Length" in obj.headers:
-                    content_len = int(obj.headers["Content-Length"][0]) - len(tokenizer.extra_chars)
-                    extra = ""
-                    if content_len > 0:
-                        extra = self.client.recv(content_len).decode("utf-8")
-                    obj.data = "".join(tokenizer.extra_chars) + extra
-                    if obj.method == "POST":
-                        parse_post(obj)
-
-                resp = self.httpserv.call_handler(obj)
-
-                if resp == None:
-                    resp = self.httpserv.serve_static(obj)
-
-                if resp == None:
-                    resp = HTTPResponse(data='<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\n'
-                            '<title>404 Not Found</title>\n'
-                            '<h1>Not Found</h1>\n'
-                            '<p>The requested URL was not found on the server.  If you entered the URL '
-                            'manually, please check your spelling and try again.</p>', 
-                            status_code=404, reason_phrase="Not Found")
-
-                print(resp.serialize())
-
-                self.client.send(resp.serialize().encode("utf-8"))
-
-                if resp.is_static:
-                    length = os.path.getsize(resp.data)
-                    with open(resp.data, "r") as FILE:
-                        d = FILE.read(1024)
-                        while d:
-                            print(d)
-                            self.client.send(d.encode("utf-8"))
-                            d = FILE.read(1024)
-
-                if resp.version == "HTTP/1.1":
-                    if "Connection" in resp.headers and resp.headers["Connection"] == "close":
-                        persistent = False
-                else:  # older HTTP versions
-                    if "Connection" in resp.headers and resp.headers["Connection"] != "keep-alive":
-                        persistent = False
-
-        except socket.timeout:
-            pass
-        finally:
-            self.client.close()
-
-def epoch_to_httpdate(self, epoch):
-    pass
-
-def httpdate_to_epoch(self, httpdate):
-    pass
-
-def _check_conditions(req_obj, real_path):
-    last_modified = os.path.getmtime(real_path)
-
-    return True
+from .httpobjects import HTTPResponse, HTTPRequest
+from .buffered_io import BufferedIO
 
 class HTTPServ(object):
     def __init__(self):
-        self.static_routes = {"/static/":"./static/"}
         self.routes = {}
-    
-    def serve_static(self, req_obj):
-        """
-            Current algorithm for determining static routes is kind of janky. 
-            There is probably a better way of doing this. This also fails with 
-            relative pathing for resources.
+        self.static_routes = {"/static/":"./static/"}
 
-            Directory traversal by default is not supported.
-
-            :param req_obj: Initial request object
-            :return: HTTP 200 if needs to send file, HTTP 304 if passes GET 
-                     conditions, None if no such route for the file
-        """
-        resp = None
-        for s in self.static_routes:
-            if s == req_obj.uri[:len(s)]:
-                real_path = os.path.abspath(self.static_routes[s] + req_obj.uri[len(s):])
-
-                if os.path.isfile(real_path): 
-                    if _check_conditions(req_obj, real_path):
-                        resp = HTTPResponse(status_code=200, reason_phrase="OK", data=real_path)
-                        resp.is_static = True
-                        resp.headers["Content-Type"] = mimetypes.guess_type(real_path)[0]
-                    else:
-                        resp = HTTPResponse(status_code=304, reason_phrase="Not Modified")
-
-        return resp
- 
-    def handle(self, route, callback, methods={"GET"}):
+    def handle(self, route, callback, methods=["GET"]):
         self.routes[route] = (callback, methods)
 
-    def call_handler(self, req_obj):
-        resp = HTTPResponse()
-        if req_obj.uri in self.routes:
-            route = self.routes[req_obj.uri]
-            if req_obj.method in route[1]:
-                route[0](req_obj, resp)
-                return resp
-        
-        return None
+    def call_handler(self, req, resp):
+        if req.uri in self.routes:
+            rtable_entry = self.routes[req.uri]
+            if req.method in rtable_entry[1]:
+                rtable_entry[0](req, resp)
+                return
+            else:
+                resp.status_code = 405
+                resp.reason_phrase = "Method Not Allowed"
+                return
 
+        for s in self.static_routes:
+            if req.uri[:len(s)]:
+                real_path = os.path.abspath(self.static_routes[s] + req.uri[len(s):])
+
+                if os.path.isfile(real_path): 
+                    resp.send_file(real_path)
+                    return
+
+        resp.status_code = 404
+        resp.reason_phrase = "Not Found"
+        resp.write('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">\n' \
+                '<title>404 Not Found</title>\n' \
+                '<h1>Not Found</h1>\n' \
+                '<p>The requested URL was not found on the server.  If you entered the URL ' \
+                'manually, please check your spelling and try again.</p>')
+
+    def _handle_req(self, sock, addr):
+        persistent = True
+
+        buf_sock = BufferedIO(sock.recv, sock.send)
+        while persistent:
+            req_line = buf_sock.read_until("\n").strip()
+            print("[%s:%s] - %s" %(addr[0], addr[1], req_line))
+            req_line = req_line.split(" ")
+
+            ver = "HTTP/1.0"
+            if len(req_line) > 2:
+                ver = req_line[2]
+
+            req = HTTPRequest(method=req_line[0], uri=req_line[1], version=ver)
+
+            cur = buf_sock.read_until("\n")
+            while cur != "\r\n" and cur != "\n":
+                cur_split = cur.strip().split(": ")
+                req.headers[cur_split[0]] = ": ".join(cur_split[1:])
+                cur = buf_sock.read_until("\n")
+
+            req.parse_cookies()
+
+            if "Content-Length" in req.headers:
+                req.write(buf_sock.read(int(req.headers["Content-Length"])))
+
+            if req.method == "POST":
+                req.parse_post()
+
+            resp = HTTPResponse(status_code = 200, reason_phrase="OK")
+            self.call_handler(req, resp)
+
+            buf_sock.buf_write(resp)
+
+            if ver == "HTTP/1.1":
+                if "Connection" in req.headers and req.headers["Connection"] == "close":
+                    persistent = False
+            else:  # older HTTP versions
+                if not "Connection" in req.headers or req.headers["Connection"] != "keep-alive":
+                    persistent = False
+
+        sock.close()
 
     def listen_and_serve(self, host="0.0.0.0", port=80):
         self.host = host
-        self.port = int(port)
+        self.port = port
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            sock.bind((self.host, self.port))
-            sock.listen(5)
 
-            while True:
-                try:
-                    client, addr = sock.accept()
-                    conn = ConnectionHandler(self, client, addr)
-                    conn.start()
-                except socket.timeout:
-                    pass
+        sock.bind((self.host, self.port))
+        sock.listen(5)
 
-        except Exception:
-            traceback.print_exc()
-        finally: 
-            sock.close()
+        while True:
+            client, addr = sock.accept()
+            p = multiprocessing.Process(target=self._handle_req, args=(client,addr))
+            p.start()
 
