@@ -1,8 +1,8 @@
 #!/usr/bin/python3
-import multiprocessing
 import os
 import socket
 import sys
+import threading
 
 from .httpobjects import HTTPResponse, HTTPRequest
 from .buffered_io import BufferedIO
@@ -96,6 +96,7 @@ class HTTPServ(object):
 
         while True:
             client, addr = sock.accept()
-            p = multiprocessing.Process(target=self._handle_req, args=(client,addr))
-            p.start()
+
+            conn = threading.Thread(target=self._handle_req, args=(client,addr))
+            conn.start()
 
