@@ -116,21 +116,25 @@ class HTTPRequest(HTTPObject):
         self.method = method
         uri_comp = uri.split("?")
 
+        self.args = {}
+        self.cookies = {}
+        self.form = {}
+
         self.uri = uri_comp[0]
 
         if len(uri_comp) > 1:
-            self._parse_query_str(uri_comp[1:])
+            self._parse_query_str("?".join(uri_comp[1:]))
 
-        self.cookies = {}
-        self.form = {}
-        self.args = {}
-
-    def _parse_query_str(self, data):
-        pass
 
     def write(self, data):
         self.data_len += len(data)
         self.data.write(data)
+
+    def _parse_query_str(self, data):
+        args = data.split("&")
+        for item in args:
+            parts = item.split("=")
+            self.args[parts[0]] = "=".join(parts[1:])
 
     def parse_post(self):
         fields = self.data.values().split("&")

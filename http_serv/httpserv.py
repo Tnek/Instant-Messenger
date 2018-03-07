@@ -87,7 +87,7 @@ class HTTPServ(object):
 
     def listen_and_serve(self, host="0.0.0.0", port=80):
         self.host = host
-        self.port = port
+        self.port = int(port)
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
