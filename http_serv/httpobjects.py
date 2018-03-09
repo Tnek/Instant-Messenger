@@ -1,6 +1,7 @@
 import mimetypes
 
 from .buffered_io import StringBuffer, FileBuffer
+from .cookies import Cookie
 
 class HTTPObject(object):
     def __init__(self, version="HTTP/1.1"):
@@ -14,12 +15,13 @@ class HTTPObject(object):
         self.headers = {}
         self.data = StringBuffer()
         self.data_len = 0
+        self.cookies = Cookie()
 
     def export_headers(self):
         if self.data_len > 0:
             self.headers["Content-Length"] = self.data_len
 
-        return "".join("%s: %s\r\n" %(header, self.headers[header]) for header in self.headers)
+        return "".join("%s: %s\r\n" %(header, self.headers[header]) for header in sorted(self.headers))
 
 
 class HTTPResponse(HTTPObject):
@@ -43,10 +45,8 @@ class HTTPResponse(HTTPObject):
         super().__init__(version)
         self.status_code = status_code
         self.reason_phrase = reason_phrase
-        self.cookies = {}
         self._main_resp = None
         self.headers["Content-Type"] = "text/html; charset=utf-8"
-        #: Close by default so it's harder to write memory leaks.
 
     def reset_data(self):
         self.data_len = 0
@@ -55,21 +55,10 @@ class HTTPResponse(HTTPObject):
     def export_statusline(self):
         return "%s %s %s\r\n" %(self.version, self.status_code, self.reason_phrase)
 
-    def set_cookie(self, key, value):
-        # May want to do checking for invalid characters for cookies here.
-        self.cookies[key] = value
-
-    def export_cookies(self):
-        if len(self.cookies) > 0:
-            return "Set-Cookie: " + ";".join("%s=%s" %(cookie,
-                self.cookies[cookie]) for cookie in self.cookies) + "\r\n"
-        else:
-            return ""
-
     def read(self, nbytes):
         if self._main_resp == None:
             header = self.export_statusline() + self.export_headers() + \
-                     self.export_cookies() + '\r\n'
+                     self.cookies.export_output() + '\r\n'
             self._main_resp = StringBuffer(header.encode('utf-8'))
 
         resp = self._main_resp.read(nbytes)
@@ -116,7 +105,6 @@ class HTTPRequest(HTTPObject):
         uri_comp = uri.split("?")
 
         self.args = {}
-        self.cookies = {}
         self.form = {}
 
         self.uri = uri_comp[0]
@@ -140,11 +128,3 @@ class HTTPRequest(HTTPObject):
         for field in fields:
             field_s = field.split("=")
             self.form[field_s[0]] = "=".join(field_s[1:])
-
-    def parse_cookies(self):
-        if "Cookie" in self.headers:
-            cookies = self.headers["Cookie"].split(";")
-            for cookie in cookies:
-                eq_split = cookie.split("=")
-                self.cookies[eq_split[0]] = "=".join(eq_split[1:])
-

@@ -8,7 +8,9 @@ def index(req, resp):
     elif req.method == "POST":
         if "username" in req.form:
             resp.redirect("/messenger")
-            resp.set_cookie("username", req.form["username"])
+            resp.cookies["username"] = req.form["username"]
+
+            resp.cookies["username"]["secure"] = True
 
 def messenger(req, resp):
     if not "username" in req.cookies:

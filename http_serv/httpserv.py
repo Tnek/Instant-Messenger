@@ -66,7 +66,9 @@ class HTTPServ(object):
                     req.headers[cur_split[0]] = ": ".join(cur_split[1:])
                     cur = buf_sock.read_until("\n")
 
-                req.parse_cookies()
+                if "Cookie" in req.headers:
+                    req.cookies.load(req.headers["Cookie"])
+                    del req.headers["Cookie"]
 
                 if "Content-Length" in req.headers:
                     req.write(buf_sock.read(int(req.headers["Content-Length"])))
