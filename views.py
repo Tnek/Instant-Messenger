@@ -18,6 +18,6 @@ def messenger(req, resp):
 
 def logout(req, resp):
     resp.cookies["username"] = ""
-    resp.cookies["username"]["expires"] = 0
+    resp.cookies["username"]["max-age"] = 0
     resp.redirect("/")
 
