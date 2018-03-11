@@ -9,6 +9,7 @@ def main():
 
     app.handle("/messenger", messenger, methods=["GET", "POST"])
     app.handle("/", index, methods=["GET", "POST"])
+    app.handle("/logout", logout)
 
     port = sys.argv[1] if len(sys.argv) > 1 else 8080
 

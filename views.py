@@ -10,10 +10,14 @@ def index(req, resp):
             resp.redirect("/messenger")
             resp.cookies["username"] = req.form["username"]
 
-            resp.cookies["username"]["secure"] = True
-
 def messenger(req, resp):
     if not "username" in req.cookies:
         resp.redirect("/")
         return
     resp.send_file("./static/html/messenger.html")
+
+def logout(req, resp):
+    resp.cookies["username"] = ""
+    resp.cookies["username"]["expires"] = 0
+    resp.redirect("/")
+
