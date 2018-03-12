@@ -1,0 +1,30 @@
+Project Objectives
+
+The objective of this project is to design an web-based multi-client instant messenger. Your application should allow at least two users to chat together.
+
+Progess Checklist
+------------------------------------------------------
+Design Completed (D) 
+Functionality Completed (F)
+
+D- A user should sign in by submitting her/his username. The server checks if username is available.
+
+D- Once signed in, the user receives the list of online users. To start a conversation or join an existing one, the user selects one other active user from this list.
+
+D- The user interface should consist of at least two windows (or panels): one with the list of active users and a second showing the messages of the active conversation. In the latter window, a text box allows the user to submit her/his message in the conversion.
+
+D- Once a conversation has started, other users may join by selecting one of the users already chatting.
+
+D- You may consider limiting the number of participants per conversation (e.g., 5
+active users). Each user should join one conversation at a time.
+
+D- You may also consider additional feature such as a private messaging function
+(two users may start a private conversation in a dedicated window)
+
+---------------------------------------------------
+Questions:
+
+-Conversations saved? - No
+-Any user can see every other user? - Yes
+-Can use front-end frameworks? Yes
+
