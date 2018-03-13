@@ -47,7 +47,7 @@
       <!--group messaging list =========================================================== -->
       <div class="people-list" id="people-list">
         <div class="search">
-          <input type="text" placeholder="search" />
+          <input id="search-group" type="text" placeholder="search" onkeyup="searchGroup()" />
           <i class="fa fa-search"></i>
         </div>
 
@@ -132,6 +132,16 @@
         </div> <!-- end chat-message -->
         
       </div> <!-- end chat -->
+
+    </div>
+
+    <br>
+    <p id="links">
+      <a href="/" class="text-center">Logout</a> /
+      <!-- filler options -->
+      <a href="#" class="text-center">Help</a> /
+      <a href="#" class="text-center">Terms of Service</a>
+    </p>
 
   </div> <!-- end container -->
 

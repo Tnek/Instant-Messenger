@@ -2,7 +2,10 @@
   Dummy Database **/
 
 var contactDatabase = ["Arisu", "Tnek", "BleepBloop", "Spathis"];
-var contactDatabase2 = ["Roy, Hui", "Felicity, Bi Ling, Alice"];
+var contactDatabase2 = ["Roy, Hui", "Felicity, Bi Ling, Alice", "Alice, Nico"];
+
+/** =====================================================================
+  Generate Contact Lists **/
 
 //Private message list
 $(function(){
@@ -38,6 +41,8 @@ $(function(){
   })
 });
 
+/** =====================================================================
+  Search Functions **/
 function searchPrivate() {
     var input, filter, list, contact, i;
     input = document.getElementById("search-private");
@@ -53,23 +58,21 @@ function searchPrivate() {
     }
 }
 
+//merge searchGroup with searchPrivate depending on db
+function searchGroup() {
+    var input, filter, list, contact, i;
+    input = document.getElementById("search-group");
+    filter = input.value.toUpperCase();
+    list = document.getElementById("group-message-list");
+    contact = list.getElementsByClassName("name");
+    for (i = 0; i < contact.length; i++) {
+        if (contact[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+            contact[i].parentElement.parentElement.style.display = "";
+        } else {
+            contact[i].parentElement.parentElement.style.display = "none";
+        }
+    }
+}
 
-/*
-let x = 12;
-console.log(`hello ${x}`);
 
-`
-<li>
-	${object.display_name}
-	${messages.map( (msg) => {
-		return `
-		<li>
-			${msg.user}
-			${msg.text}
-		</li>
-		`;	
-	})}
-</li>
-`
 
-*/
