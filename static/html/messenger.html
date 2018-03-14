@@ -78,6 +78,9 @@
         
         <div class="chat-history">
           <ul>
+
+            <!-- static chat
+
             <li class="clearfix">
               <div class="message-data align-right">
                 <span class="message-data-time" >10:10 AM, Today</span> &nbsp; &nbsp;
@@ -99,27 +102,8 @@
               </div>
             </li>
             
-            <li class="clearfix">
-              <div class="message-data align-right">
-                <span class="message-data-time" >10:14 AM, Today</span> &nbsp; &nbsp;
-                <span class="message-data-name" >Zephyllr</span> <i class="fa fa-circle me"></i>
-                
-              </div>
-              <div class="message other-message float-right">
-                Good to hear 0__0
-              </div>
-            </li>
-            
-            <li>
-              <div class="message-data">
-                <span class="message-data-name"><i class="fa fa-circle online"></i>Bleepbloop</span>
-                <span class="message-data-time">10:20 AM, Today</span>
-              </div>
-              <div class="message my-message">
-                perfff. will show u later today. bai
-              </div>
-            </li>
-            
+            -->
+
           </ul>
           
         </div> <!-- end chat-history -->
@@ -130,21 +114,43 @@
           <button>Send</button>
 
         </div> <!-- end chat-message -->
-        
+
       </div> <!-- end chat -->
 
-    </div>
-
+  </div> <!-- end container -->
+  
     <br>
     <p id="links">
-      <a href="/logout" class="text-center">Logout</a> /
+      <a href="/logout" class="text-center">Logout</a>
       <!-- filler options -->
-      <a href="#" class="text-center">Help</a> /
-      <a href="#" class="text-center">Terms of Service</a>
+      <a href="#" class="text-center">Help</a> 
     </p>
 
-  </div> <!-- end container -->
 
+
+<script id="message-template" type="text/x-handlebars-template">
+  <li class="clearfix">
+    <div class="message-data align-right">
+      <span class="message-data-time" >{{time}}, Today</span> &nbsp; &nbsp;
+      <span class="message-data-name" >Zephyllr</span> <i class="fa fa-circle me"></i>
+    </div>
+    <div class="message other-message float-right">
+      {{messageOutput}}
+    </div>
+  </li>
+</script>
+
+<script id="message-response-template" type="text/x-handlebars-template">
+  <li>
+    <div class="message-data">
+      <span class="message-data-name"><i class="fa fa-circle online"></i> Bleepbloop</span>
+      <span class="message-data-time">{{time}}, Today</span>
+    </div>
+    <div class="message my-message">
+      {{response}}
+    </div>
+  </li>
+</script>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -153,6 +159,7 @@
     <script src='http://cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js'></script>
 
     <script src='/static/js/messenger.js'></script>
+    <script src='/static/js/chatbox.js'></script>
 
 </body>
 

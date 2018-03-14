@@ -1,4 +1,14 @@
 /** =====================================================================
+  Temporary Actions **/
+
+$(function(){
+
+  getPrivateList();
+  getGroupList();
+  
+});
+
+/** =====================================================================
   Dummy Database **/
 
 var contactDatabase = ["Arisu", "Tnek", "BleepBloop", "Spathis"];
@@ -8,7 +18,7 @@ var contactDatabase2 = ["Roy, Hui", "Felicity, Bi Ling, Alice", "Alice, Nico"];
   Generate Contact Lists **/
 
 //Private message list
-$(function(){
+function getPrivateList(){
   //arrow function
   contactDatabase.map( contact => {
   	$('#private-message-list').append(`
@@ -22,10 +32,10 @@ $(function(){
       	</li>
   	`);
   })
-});
+};
 
 //Group message list
-$(function(){
+function getGroupList(){
   //arrow function
   contactDatabase2.map( contact => {
   	$('#group-message-list').append(`
@@ -39,7 +49,7 @@ $(function(){
       	</li>
   	`);
   })
-});
+};
 
 /** =====================================================================
   Search Functions **/
@@ -73,6 +83,8 @@ function searchGroup() {
         }
     }
 }
+
+
 
 
 

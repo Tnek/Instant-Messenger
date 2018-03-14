@@ -13,8 +13,7 @@ body {
 
 .container {
   margin: 0 auto;
-  width: 1010px;
-  background: #444753;
+  width: fit-content;
   border-radius: 5px;
   height: 722px;
 }
@@ -22,6 +21,7 @@ body {
 .people-list {
   float: left;
   border: 1px solid #C5DDEB;
+  background-color: #444753;
 }
 .people-list .search {
   padding: 20px;
@@ -61,7 +61,7 @@ body {
 }
 
 .chat {
-  width: 544.6px;
+  width: 544px;
   float: left;
   background: #F2F5F8;
   border-top-right-radius: 5px;
@@ -212,3 +212,13 @@ body {
 #links{
   text-align: center;
 }
+
+a{
+  text-decoration: none;
+  color: darkblue;
+  padding: 7px 40px;
+  margin: 5px;
+  border: solid .5px darkblue;
+  border-radius: 10px;
+}
+
