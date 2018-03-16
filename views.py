@@ -1,23 +1,34 @@
 #!/usr/bin/python3
+from http_serv.session import *
+store = Store("janky key")
+
 def index(req, resp):
-    if req.method == "GET":
-        if "username" in req.cookies:
-            resp.redirect("/messenger")
+    session = store.get_store(req)
+
+    if "username" in session:
+        resp.redirect("/messenger")
+
+    elif req.method == "GET":
         resp.send_file("./static/html/index.html")
 
     elif req.method == "POST":
-        if "username" in req.form:
-            resp.redirect("/messenger")
-            resp.cookies["username"] = req.form["username"]
+        session["username"] = req.form["username"]
+        session.save(req, resp)
+        resp.redirect("/messenger")
+
 
 def messenger(req, resp):
-    if not "username" in req.cookies:
+    session = store.get_store(req)
+    if not "username" in session:
         resp.redirect("/")
         return
     resp.send_file("./static/html/messenger.html")
 
 def logout(req, resp):
-    resp.cookies["username"] = ""
-    resp.cookies["username"]["max-age"] = 0
+    session = store.get_store(req)
+    session.delete()
     resp.redirect("/")
+
+def users(req, resp):
+    pass
 

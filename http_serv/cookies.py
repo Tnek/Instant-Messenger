@@ -26,9 +26,13 @@ class CookieAttributes(dict):
 
     def __init__(self, key, value):
         self._key = key
-        self._value = value
+        self.value = value
         for resv in self._reserved:
             dict.__setitem__(self, resv, "")
+        self.sane_defaults()            
+
+    def sane_defaults(self):
+        dict.__setitem__(self, "httponly", True)
 
     def __setitem__(self, key, value):
         key = key.lower()
@@ -38,7 +42,7 @@ class CookieAttributes(dict):
 
     def export_output(self):
         resp = []
-        resp.append("%s=%s" %(self._key, self._value))
+        resp.append("%s=%s" %(self._key, self.value))
 
         items = sorted(self.items())
         for item, value in items:
@@ -52,7 +56,7 @@ class CookieAttributes(dict):
         return "; ".join(resp)
 
     def __repr__(self):
-        return str(self._value)
+        return str(self.value)
 
 class Cookie(dict):
     def __init__(self, inp = None):
@@ -68,6 +72,9 @@ class Cookie(dict):
             resp.append("Set-Cookie: %s\r\n" %(self[i].export_output()))
 
         return "".join(resp)
+
+    def append_attribute(self, attrib):
+        dict.__setitem__(self, attrib._key, attrib)
 
     def load(self, inp):
         cookies = inp.split(";")
