@@ -1,37 +1,31 @@
 /** =====================================================================
-  Temporary Actions **/
-
-$(function(){
-
-  getPrivateList();
-  getGroupList();
-  
-});
-
-/** =====================================================================
   Dummy Database **/
 
-var contactDatabase = ["Arisu", "Tnek", "BleepBloop", "Spathis"];
 var contactDatabase2 = ["Roy, Hui", "Felicity, Bi Ling, Alice", "Alice, Nico"];
 
 /** =====================================================================
   Generate Contact Lists **/
 
 //Private message list
-function getPrivateList(){
-  //arrow function
-  contactDatabase.map( contact => {
-  	$('#private-message-list').append(`
-		<li class="clearfix">
-	        <div class="about">
-	          <div class="name"> ${contact} </div>
-	          <div class="status">
-	            <i class="fa fa-circle online"></i> online
-	          </div>
-	        </div>
-      	</li>
-  	`);
-  })
+function getUsers(){
+  $.getJSON("/users", function(result) {
+    $('#private-message-list').html('');
+    //arrow function
+    result.map( contact => {
+    $('#private-message-list').append(`
+      <li class="clearfix">
+        <div class="about">
+          <div class="name"> ${contact} </div>
+          <div class="status">
+            <i class="fa fa-circle online"></i> online
+          </div>
+        </div>
+      </li>
+    `);
+    })
+  });
+
+  setTimeout(getUsers, 1000);
 };
 
 //Group message list
@@ -85,6 +79,7 @@ function searchGroup() {
 }
 
 
-
-
+$(document).ready(function() {
+    getUsers();
+});
 
