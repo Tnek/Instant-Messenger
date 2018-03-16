@@ -92,6 +92,13 @@ class HTTPResponse(HTTPObject):
         self.data = FileBuffer(file_dir)
         self.data_len = self.data.size()
 
+    def forbidden(self):
+        self.status_code = 403
+        self.reason_phrase = "Forbidden"
+        self.reset_data()
+        self.write('<html><head><title>403 Forbidden</title></head> <body bgcolor'
+                    '="white"> <center><h1>404 Not Found</h1></center></body></html>')
+
 
 valid_methods = {"OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "CONNECT" }
 
