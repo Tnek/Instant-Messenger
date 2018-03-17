@@ -1,4 +1,4 @@
-var cycle = -1;
+var cycle = -1; //tmp var for chat 
 
 (function(){
   
@@ -24,17 +24,20 @@ var cycle = -1;
       this.$chatHistory = $('.chat-history');
       this.$button = $('button');
       this.$textarea = $('#message-to-send');
-      this.$chatHistoryList =  this.$chatHistory.find('ul');
+      this.$chatHistoryList = this.$chatHistory.find('ul');
     },
+
+    //bind() function depricated, use on() 
     bindEvents: function() {
       this.$button.on('click', this.addMessage.bind(this));
       this.$textarea.on('keyup', this.addMessageEnter.bind(this));
     },
     render: function() {
       this.scrollToBottom();
-      if (this.messageToSend.trim() !== '') {
+      if (this.messageToSend.trim() !== '') { //if nonspace charas are typed
         var template = Handlebars.compile( $("#message-template").html());
         var context = { 
+          username: "Arisu",
           messageOutput: this.messageToSend,
           time: this.getCurrentTime()
         };
@@ -46,6 +49,7 @@ var cycle = -1;
         // responses
         var templateResponse = Handlebars.compile( $("#message-response-template").html());
         var contextResponse = { 
+          username: "Tnek",
           response: this.getRandomItem(this.messageResponses),
           time: this.getCurrentTime()
         };
@@ -53,7 +57,7 @@ var cycle = -1;
         setTimeout(function() {
           this.$chatHistoryList.append(templateResponse(contextResponse));
           this.scrollToBottom();
-        }.bind(this), 1500);
+        }.bind(this), 500);
         
       }
       

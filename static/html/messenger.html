@@ -25,7 +25,7 @@
       <div class="people-list" id="people-list">
 
         <div class="search">
-          <input id="search-private" type="text" placeholder="search" onkeyup="searchPrivate()" />
+          <input id="search-private" type="text" placeholder="Search" onkeyup="searchPrivate()" />
           <i class="fa fa-search"></i>
         </div>
 
@@ -47,7 +47,7 @@
       <!--group messaging list =========================================================== -->
       <div class="people-list" id="people-list">
         <div class="search">
-          <input id="search-group" type="text" placeholder="search" onkeyup="searchGroup()" />
+          <input id="search-group" type="text" placeholder="Search" onkeyup="searchGroup()" />
           <i class="fa fa-search"></i>
         </div>
 
@@ -70,46 +70,20 @@
       <div class="chat">
 
         <div class="chat-header clearfix">
-          
           <div class="chat-about">
-            <div class="chat-with">Chat with Bleepbloop</div>
+            <div class="chat-with">Chat with <span id="currUser"></span></div>
           </div>
         </div> <!-- end chat-header -->
         
         <div class="chat-history">
           <ul>
-
-            <!-- static chat
-
-            <li class="clearfix">
-              <div class="message-data align-right">
-                <span class="message-data-time" >10:10 AM, Today</span> &nbsp; &nbsp;
-                <span class="message-data-name" >Zephyllr</span> <i class="fa fa-circle me"></i>
-                
-              </div>
-              <div class="message other-message float-right">
-                Hi Bleepbloop, how are you? How is the project coming along?
-              </div>
-            </li>
-            
-            <li>
-              <div class="message-data">
-                <span class="message-data-name"><i class="fa fa-circle online"></i>Bleepbloop</span>
-                <span class="message-data-time">10:12 AM, Today</span>
-              </div>
-              <div class="message my-message">
-                it's great. i love coding. i aspire to be a passionate programmer.
-              </div>
-            </li>
-            
-            -->
-
+            <!--append chat messages via js -->
           </ul>
           
         </div> <!-- end chat-history -->
         
         <div class="chat-message clearfix">
-          <textarea name="message-to-send" id="message-to-send" placeholder ="Type your message" rows="3"></textarea>
+          <textarea name="message-to-send" id="message-to-send" placeholder ="Type your message" rows="2"></textarea>
           
           <button>Send</button>
 
@@ -126,31 +100,31 @@
       <a href="#" class="text-center">Help</a> 
     </p>
 
+    
+    <!-- HandleBars Template-->
+    <script id="message-template" type="text/x-handlebars-template">
+      <li class="clearfix">
+        <div class="message-data align-right">
+          <span class="message-data-time" >{{time}}</span> &nbsp; &nbsp;
+          <span class="message-data-name" >{{username}}</span> <i class="fa fa-circle me"></i>
+        </div>
+        <div class="message other-message float-right">
+          {{messageOutput}}
+        </div>
+      </li>
+    </script>
 
-
-<script id="message-template" type="text/x-handlebars-template">
-  <li class="clearfix">
-    <div class="message-data align-right">
-      <span class="message-data-time" >{{time}}, Today</span> &nbsp; &nbsp;
-      <span class="message-data-name" >Zephyllr</span> <i class="fa fa-circle me"></i>
-    </div>
-    <div class="message other-message float-right">
-      {{messageOutput}}
-    </div>
-  </li>
-</script>
-
-<script id="message-response-template" type="text/x-handlebars-template">
-  <li>
-    <div class="message-data">
-      <span class="message-data-name"><i class="fa fa-circle online"></i> Bleepbloop</span>
-      <span class="message-data-time">{{time}}, Today</span>
-    </div>
-    <div class="message my-message">
-      {{response}}
-    </div>
-  </li>
-</script>
+    <script id="message-response-template" type="text/x-handlebars-template">
+      <li>
+        <div class="message-data">
+          <span class="message-data-name"><i class="fa fa-circle online"></i>{{username}}</span>
+          <span class="message-data-time">{{time}}</span>
+        </div>
+        <div class="message my-message">
+          {{response}}
+        </div>
+      </li>
+    </script>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

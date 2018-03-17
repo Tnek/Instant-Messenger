@@ -1,6 +1,5 @@
 /** =====================================================================
   Dummy Database **/
-
 var contactDatabase2 = ["Roy, Hui", "Felicity, Bi Ling, Alice", "Alice, Nico"];
 
 /** =====================================================================
@@ -25,7 +24,7 @@ function getUsers(){
     })
   });
 
-  setTimeout(getUsers, 1000);
+  setTimeout(getUsers, 5000); //5s delay
 };
 
 //Group message list
@@ -33,7 +32,7 @@ function getGroupList(){
   //arrow function
   contactDatabase2.map( contact => {
   	$('#group-message-list').append(`
-		<li class="clearfix">
+		    <li class="clearfix">
 	        <div class="about">
 	          <div class="name"> ${contact} </div>
 	          <div class="status">
@@ -44,6 +43,14 @@ function getGroupList(){
   	`);
   })
 };
+
+
+//Get Current Contact
+function getCurr(){
+  currContact = document.getElementById("currUser");
+  currContact.append("Tnek");
+}
+
 
 /** =====================================================================
   Search Functions **/
@@ -81,5 +88,6 @@ function searchGroup() {
 
 $(document).ready(function() {
     getUsers();
+    getCurr();
 });
 

@@ -13,12 +13,13 @@ body {
 
 .container {
   margin: 0 auto;
-  width: fit-content;
+  width: max-content;
   border-radius: 5px;
-  height: 722px;
+  height: 600px;
 }
 
 .people-list {
+  height: inherit;
   float: left;
   border: 1px solid #C5DDEB;
   background-color: #444753;
@@ -62,6 +63,7 @@ body {
 
 .chat {
   width: 544px;
+  height: inherit;
   float: left;
   background: #F2F5F8;
   border-top-right-radius: 5px;
@@ -98,7 +100,7 @@ body {
   padding: 30px 30px 20px;
   border-bottom: 2px solid white;
   overflow-y: scroll;
-  height: 480px;
+  height: 382px;
 }
 .chat .chat-history .message-data {
   margin-bottom: 15px;
