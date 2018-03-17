@@ -33,14 +33,30 @@ def messenger(req, resp):
 def logout(req, resp):
     session = session_store.get_store(req)
     if session:
+        if "username" in session:
+            appdata.leave(session["username"])
         session.delete()
     resp.redirect("/")
 
 def get_users(req, resp):
+    resp.headers["Content-Type"] = "application/json"
     resp.write(str(json.dumps(appdata.usernames())))
 
 def conversations(req, resp):
-    pass
+    session = session_store.get_store(req)
+
+    if not "username" in session:
+        resp.redirect("/")
+        return
+
+    resp.headers["Content-Type"] = "application/json"
+
+#    user = appdata.get_user(username)
+#    resp.write(json.dumps([i.jsonify() for i in appdata.conversations))
+#    output = {
+#            "conversations": appdata.conversations.jsonify()
+#            "pms": user.get_pms()
+#            }
 
 def message(req, resp):
     pass
