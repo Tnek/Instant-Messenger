@@ -5,6 +5,30 @@ var contactDatabase2 = ["Roy, Hui", "Felicity, Bi Ling, Alice", "Alice, Nico"];
 /** =====================================================================
   Generate Contact Lists **/
 
+//Create New Conv 
+function listUsers(){
+  $.getJSON("/users", function(result) {
+    $('all-users').html('');
+    //arrow function
+    result.map( contact => {
+    $('#all-users').append(`
+
+      <div class="form-group">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="gridCheck">
+          <label class="form-check-label" for="gridCheck">
+            ${contact}
+          </label>
+        </div>
+      </div>
+
+    `);
+    })
+  });
+
+  setTimeout(getUsers, 5000); //5s delay
+};
+
 //Private message list
 function getUsers(){
   $.getJSON("/users", function(result) {
@@ -89,5 +113,6 @@ function searchGroup() {
 $(document).ready(function() {
     getUsers();
     getCurr();
+    listUsers();
 });
 

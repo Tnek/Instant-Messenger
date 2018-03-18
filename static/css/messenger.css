@@ -13,7 +13,7 @@ body {
 
 .container {
   margin: 0 auto;
-  width: max-content;
+  width: max-content !important;
   border-radius: 5px;
   height: 600px;
 }
@@ -224,3 +224,14 @@ a{
   border-radius: 10px;
 }
 
+#create_conv{
+  background-color: cornflowerblue;
+  color: white;
+  height: 35px;
+  margin-left: 35px;
+  margin-top: -15px;
+}
+
+#myModal {
+  color: black;
+}
