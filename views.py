@@ -34,7 +34,7 @@ def logout(req, resp):
     session = session_store.get_store(req)
     if session:
         if "username" in session:
-            appdata.leave(session["username"])
+            appdata.disconnect(session["username"])
         session.delete()
     resp.redirect("/")
 
@@ -51,19 +51,19 @@ def conversations(req, resp):
 
     resp.headers["Content-Type"] = "application/json"
 
-#    user = appdata.get_user(username)
-#    resp.write(json.dumps([i.jsonify() for i in appdata.conversations))
-#    output = {
-#            "conversations": appdata.conversations.jsonify()
-#            "pms": user.get_pms()
-#            }
+def get_msgs(req, resp):
+    session = session_store.get_store(req):
+    if not "username" in session:
+        resp.redirect("/")
+        return
 
-def message(req, resp):
-    pass
+    resp.headers["Content-Type"] = "application/json"
+    user = appdata.users["username"]
+    resp.write(json.dumps([i.jsonify() for i in user.get_msgs()]))
 
 serv.handle("/", index, methods=["GET", "POST"])
 serv.handle("/users", get_users)
 serv.handle("/messenger", messenger, methods=["GET", "POST"])
 serv.handle("/logout", logout)
 serv.handle("/conversations", conversations)
-
+serv.handle("/msgs", get_msgs)
