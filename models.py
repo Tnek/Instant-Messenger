@@ -9,6 +9,7 @@ class Conversation(object):
         self.participants = set()
         self.conv_id = conv_id
         self.messages = []
+        self.public = False
     
     def jsonify(self):
         return json.dumps({"c_id":self.conv_id,
@@ -35,6 +36,7 @@ class User(object):
         self.unread_queue = []
         self.msg_lock = Lock()
         self.conversations = {}
+        self.pms = {}
 
     def add_msg(self, msg):
         self.msg_lock.acquire()
@@ -56,6 +58,7 @@ class User(object):
 class Messenger(object):
     def __init__(self):
         self.users = {}
+        self.public_channels = {}
         self.conversations = {}
 
     def register(self, uname):
@@ -74,3 +77,6 @@ class Messenger(object):
     def disconnect(self, uname):
         if uname in self.users:
             del self.users[uname]
+    
+    def new_conversation(self, users):
+        pass

@@ -2,6 +2,7 @@
 import json
 
 from http_serv.session import *
+from models import *
 from app import serv, session_store, appdata
 
 def index(req, resp):
@@ -42,6 +43,9 @@ def get_users(req, resp):
     resp.headers["Content-Type"] = "application/json"
     resp.write(str(json.dumps(appdata.usernames())))
 
+def serialize_list(items):
+    return json.dumps([i.jsonify() for i in items])
+
 def conversations(req, resp):
     session = session_store.get_store(req)
 
@@ -50,16 +54,33 @@ def conversations(req, resp):
         return
 
     resp.headers["Content-Type"] = "application/json"
+    user = appdata.users[session["username"]]
+    resp.write(serialize_list(user.conversations))
+
 
 def get_msgs(req, resp):
-    session = session_store.get_store(req):
+    session = session_store.get_store(req)
     if not "username" in session:
         resp.redirect("/")
         return
 
     resp.headers["Content-Type"] = "application/json"
-    user = appdata.users["username"]
-    resp.write(json.dumps([i.jsonify() for i in user.get_msgs()]))
+    user = appdata.users[session["username"]]
+    resp.write(serialize_list(user.get_msgs()))
+
+def msg(req, resp):
+    session = session_store.get_store(req)
+    if not "username" in session:
+        resp.redirect("/")
+        return
+
+    if req.method == "POST":
+        user = appdata.users[session["username"]]
+        contents = req.form["contents"] 
+        conv_id = req.form["conv"]
+        conv = appdata.conversations[conv_id]
+
+        appdata.add_msg(Message(user, contents, conv))
 
 serv.handle("/", index, methods=["GET", "POST"])
 serv.handle("/users", get_users)
