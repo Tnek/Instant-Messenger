@@ -1,9 +1,11 @@
 /** =====================================================================
   Dummy Database **/
 var contactDatabase2 = ["Roy, Hui", "Felicity, Bi Ling, Alice", "Alice, Nico"];
+var contactDatabase3 = {"Roy": "Hello"};
+
 
 /** =====================================================================
-  Generate Contact Lists **/
+  Create Groups **/
 
 //Create New Conv 
 function listUsers(){
@@ -26,8 +28,12 @@ function listUsers(){
     })
   });
 
-  setTimeout(getUsers, 5000); //5s delay
+  // setTimeout(getUsers, 5000); //5s delay
 };
+
+
+/** =====================================================================
+  Generate Contact Lists **/
 
 //Private message list
 function getUsers(){
@@ -48,32 +54,30 @@ function getUsers(){
     })
   });
 
-  setTimeout(getUsers, 5000); //5s delay
+  // setTimeout(getUsers, 5000); //5s delay
 };
 
 //Group message list
 function getGroupList(){
+  $.getJSON("/users", function(result) {
+    $('#group-message-list').html('');
   //arrow function
-  contactDatabase2.map( contact => {
-  	$('#group-message-list').append(`
-		    <li class="clearfix">
-	        <div class="about">
-	          <div class="name"> ${contact} </div>
-	          <div class="status">
-	            <i class="fa fa-circle online"></i> online
-	          </div>
-	        </div>
-      	</li>
-  	`);
-  })
+  result.map( contact => {
+    $('#group-message-list').append(`
+        <li class="clearfix user-li" onclick="getChatWindow(this)">
+          <div class="about">
+            <div class="name"> ${contact} </div>
+            <div class="status">
+              <i class="fa fa-circle online"></i> online
+            </div>
+          </div>
+        </li>
+    `);
+    })
+  });
+
+  // setTimeout(getUsers, 5000); //5s delay
 };
-
-
-//Get Current Contact
-function getCurr(){
-  currContact = document.getElementById("currUser");
-  currContact.append("Tnek");
-}
 
 
 /** =====================================================================
@@ -110,9 +114,27 @@ function searchGroup() {
 }
 
 
+/** =====================================================================
+  Onclick Chat **/
+function getChatWindow(e){
+  currContact = document.getElementById("currUser");
+  currContact.innerHTML = e.getElementsByClassName("name")[0].innerHTML;
+}
+
+//Get Current Contact
+function getCurr(){
+  currContact = document.getElementById("currUser");
+  currContact.append("Tnek");
+}
+
+
+/** =====================================================================
+  Onload **/
+
 $(document).ready(function() {
     getUsers();
-    getCurr();
+    // getCurr();
     listUsers();
+    getGroupList();
 });
 
