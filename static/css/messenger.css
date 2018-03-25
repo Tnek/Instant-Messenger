@@ -231,7 +231,7 @@ a{
   color: black;
 }
 
-#all-users{
+#checklist-list{
   margin-left: 15px;
 }
 
@@ -247,4 +247,10 @@ a{
   height: 20px;
   float: right;
   padding-left: 70px;
+}
+
+#search-checklist{
+  background-color: white;
+  border: solid 1px gray;
+  color: black;
 }

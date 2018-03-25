@@ -2,139 +2,132 @@
   Dummy Database **/
 var contactDatabase2 = ["Roy, Hui", "Felicity, Bi Ling, Alice", "Alice, Nico"];
 var contactDatabase3 = {"Roy": "Hello"};
-
+var contacts = [];
+var selectedContact = null;
 
 /** =====================================================================
   Create Groups **/
 
-//Create New Conv 
-function listUsers(){
+function loadContacts(){
   $.getJSON("/users", function(result) {
-    $('all-users').html('');
-    //arrow function
-    result.map( contact => {
-    $('#all-users').append(`
-
-      <div class="form-group">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="gridCheck">
-          <label class="form-check-label" for="gridCheck">
-            ${contact}
-          </label>
-        </div>
-      </div>
-
-    `);
-    })
+    contacts = result;
+    getUsers();
+    getGroupList();
+    getModalList();
+    getCurr();
   });
 
-  // setTimeout(getUsers, 5000); //5s delay
-};
-
+  setTimeout(loadContacts, 1000); //3s delay
+}
 
 /** =====================================================================
   Generate Contact Lists **/
 
 //Private message list
 function getUsers(){
-  $.getJSON("/users", function(result) {
-    $('#private-message-list').html('');
-    //arrow function
-    result.map( contact => {
-    $('#private-message-list').append(`
-      <li class="clearfix">
-        <div class="about">
-          <div class="name"> ${contact} </div>
-          <div class="status">
-            <i class="fa fa-circle online"></i> online
-          </div>
-        </div>
-      </li>
-    `);
-    })
-  });
-
-  // setTimeout(getUsers, 5000); //5s delay
+  privatesearch.render();
 };
 
 //Group message list
 function getGroupList(){
-  $.getJSON("/users", function(result) {
-    $('#group-message-list').html('');
-  //arrow function
-  result.map( contact => {
-    $('#group-message-list').append(`
+  groupsearch.render();
+};
+
+//Modal message list 
+function getModalList(){
+  checklistsearch.render();
+};
+
+/** =====================================================================
+  Search Functions **/
+function searchPrivate() {
+  privatesearch.render();
+}
+
+function searchGroup() {
+  groupsearch.render();
+}
+
+function searchChecklist() {
+  checklistsearch.render();
+}
+
+/** =====================================================================
+  SearchBar **/
+class SearchBar {
+  constructor(input, target, is_modal) {
+    this.input = document.getElementById(input);
+    this.target = document.getElementById(target);
+    this.is_modal = is_modal;
+  }
+
+  render() {
+    let querystring = this.input.value.toLowerCase();
+    let filteredList = contacts.filter(contact => contact.toLowerCase().indexOf(querystring) > -1);
+
+    this.target.innerHTML = '';
+
+    if( this.is_modal == false ){
+      filteredList.map( contact => {
+      $(this.target).append(`
         <li class="clearfix user-li" onclick="getChatWindow(this)">
           <div class="about">
-            <div class="name"> ${contact} </div>
+            <div class="name name-field">${contact}</div>
             <div class="status">
               <i class="fa fa-circle online"></i> online
             </div>
           </div>
         </li>
-    `);
-    })
-  });
-
-  // setTimeout(getUsers, 5000); //5s delay
-};
-
-
-/** =====================================================================
-  Search Functions **/
-function searchPrivate() {
-    var input, filter, list, contact, i;
-    input = document.getElementById("search-private");
-    filter = input.value.toUpperCase();
-    list = document.getElementById("private-message-list");
-    contact = list.getElementsByClassName("name");
-    for (i = 0; i < contact.length; i++) {
-        if (contact[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
-            contact[i].parentElement.parentElement.style.display = "";
-        } else {
-            contact[i].parentElement.parentElement.style.display = "none";
-        }
+      `);
+      })
+    }else{
+      filteredList.map( contact => {
+        $(this.target).append(`
+          <div class="form-group">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="gridCheck">
+              <label class="form-check-label name-field" for="gridCheck">${contact}</label>
+            </div>
+          </div>
+        `);
+      })
     }
+  }
+
 }
 
-//merge searchGroup with searchPrivate depending on db
-function searchGroup() {
-    var input, filter, list, contact, i;
-    input = document.getElementById("search-group");
-    filter = input.value.toUpperCase();
-    list = document.getElementById("group-message-list");
-    contact = list.getElementsByClassName("name");
-    for (i = 0; i < contact.length; i++) {
-        if (contact[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
-            contact[i].parentElement.parentElement.style.display = "";
-        } else {
-            contact[i].parentElement.parentElement.style.display = "none";
-        }
-    }
-}
-
+var groupsearch = new SearchBar("search-group", "group-message-list", false);
+var privatesearch = new SearchBar("search-private", "private-message-list", false);
+var checklistsearch = new SearchBar("search-checklist", "checklist-list", true);
 
 /** =====================================================================
   Onclick Chat **/
 function getChatWindow(e){
-  currContact = document.getElementById("currUser");
-  currContact.innerHTML = e.getElementsByClassName("name")[0].innerHTML;
+  selectedContact = $(e).find('.name').first().html();
+  $("#currUser").html(selectedContact);
 }
 
 //Get Current Contact
 function getCurr(){
-  currContact = document.getElementById("currUser");
-  currContact.append("Tnek");
+  if (contacts.indexOf(selectedContact) == -1) {
+    selectedContact = null;
+  }
+  if (!selectedContact) {
+    selectedContact = contacts[0];
+    $("#currUser").html(selectedContact);
+  }
 }
 
 
 /** =====================================================================
   Onload **/
-
 $(document).ready(function() {
-    getUsers();
-    // getCurr();
-    listUsers();
-    getGroupList();
+    loadContacts();
 });
+
+/** =====================================================================
+  Constant **/
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
 
