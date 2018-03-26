@@ -72,9 +72,9 @@ class SearchBar {
       $(this.target).append(`
         <li class="clearfix user-li" onclick="getChatWindow(this)">
           <div class="about">
-            <div class="name name-field">${contact}</div>
-            <div class="status">
-              <i class="fa fa-circle online"></i> online
+            <div class="name name-field">
+              <span class="fa fa-circle online"></span>
+              ${contact}
             </div>
           </div>
         </li>

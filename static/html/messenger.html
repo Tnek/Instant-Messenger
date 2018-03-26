@@ -2,20 +2,18 @@
 <html lang="en" >
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Instant Messenger</title>
   
-  <!-- Boostrap --> 
+  <!-- CDNS --> 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'>
 
   <!-- Custom CSS -->
   <link rel="stylesheet" href="/static/css/messenger.css">
-
-
 </head>
 
 <body>
@@ -25,13 +23,7 @@
       <!--private messaging list =========================================================== -->
       <div class="people-list" id="people-list">
 
-      <!--
-        <div class="search">
-          <input id="search-private" type="text" placeholder="Search" onkeyup="searchPrivate()" />
-          <i class="fa fa-search"></i>
-        </div>
-      -->
-
+        <!--private message search bar -->
         <div class="search">
           <input id="search-private" type="text" placeholder="Search" onkeyup="searchPrivate()" />
           <i class="fa fa-search"></i>
@@ -45,6 +37,7 @@
             </div>
           </li>
 
+        <!--container for all users -->
           <div id="private-message-list">
               <!--append contact list via js -->
           </div>
@@ -147,6 +140,8 @@
       <!-- filler options -->
       <a href="#" class="text-center">Help</a> 
     </p>
+
+
 
     
     <!-- HandleBars Template-->

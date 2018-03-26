@@ -46,7 +46,7 @@ body {
   height: 635px;
 }
 .people-list ul li {
-  padding-bottom: 20px;
+  margin: 5px 0px;
   padding-bottom: 13px;
   border-bottom: solid 0.5px dimgray;
 }
@@ -177,8 +177,8 @@ body {
 }
 
 .online, .offline, .me {
-  margin-right: 3px;
-  font-size: 10px;
+  margin-right: 5px;
+  font-size: 12px;
 }
 
 .online {
@@ -243,10 +243,15 @@ a{
   cursor: pointer;
 }
 
+.user-li:hover{
+  background-color: #5b5f6b;
+}
+
 #create_conv{
   height: 20px;
   float: right;
   padding-left: 70px;
+  cursor: pointer;
 }
 
 #search-checklist{
