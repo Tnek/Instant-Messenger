@@ -30,7 +30,6 @@ class UserSelectModal {
   constructor(input, target, selected_target) {
     this.input = input;
     this.target = target;
-    this.selected_target = selected_target;
     this.selected_users = {};
   }
 
@@ -39,19 +38,32 @@ class UserSelectModal {
     let visible_items = list_of_items.filter(item => item.toLowerCase().indexOf(query) > - 1);
 
     $(this.target).empty();
+
+      /*
+    Object.keys(this.selected_users).map( item => {
+      $(this.target).append(`
+        <button class="list-group-item list-group-item-action active" href="#" onclick="users_search.remove_selected('${item}')">${item}</button>
+      `);
+    });
+    */
+
     visible_items.map( item => {
       if (!this.selected_users.hasOwnProperty(item)) {
         $(this.target).append(`
-          <button class="list-group-item list-group-item-action" href="#" onclick="users_search.add_to_selected('${item}')">${item}</button>
+          <div class="list-group-item list-group-item-action" href="#" onclick="users_search.add_to_selected('${item}')">${item}</div>
         `);
+      } else {
+        $(this.target).append(`
+          <div class="list-group-item list-group-item-action active" href="#" onclick="users_search.remove_selected('${item}')">${item}</div>
+        `);
+
       }
     });
 
-    Object.keys(this.selected_users).map( item => {
-      $(this.selected_target).append(`
-        <button class="list-group-item list-group-item-action" href="#" onclick="users_search.remove_selected('${item}')">${item}</button>
-      `);
-    });
+  }
+  remove_selected(user) {
+    delete this.selected_users[user];
+    messenger.render_users_search();
   }
 
   add_to_selected(user) {

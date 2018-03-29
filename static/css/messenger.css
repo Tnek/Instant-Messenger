@@ -240,11 +240,8 @@ a{
   margin-bottom: 8px;
 }
 
-.user-li{
-  cursor: pointer;
-}
-
 .user-li:hover{
+  cursor: pointer;
   background-color: #5b5f6b;
 }
 
@@ -270,4 +267,12 @@ a{
 .formHeader {
   margin-top: 10px;
   font-size: 16px;
+}
+
+.list-group-item {
+  user-select: none; /* Standard */
+}
+
+#modal-listgroup .active {
+  outline: 1px solid white;
 }
