@@ -27,7 +27,7 @@ class SideBarList {
 
 
 class UserSelectModal {
-  constructor(input, target, selected_target) {
+  constructor(input, target) {
     this.input = input;
     this.target = target;
     this.selected_users = {};
@@ -76,7 +76,7 @@ class UserSelectModal {
 }
 
 
-var users_search = new UserSelectModal("#search-checklist", "#modal-listgroup", "#modal-selectedusers");
+var users_search = new UserSelectModal("#search-checklist", "#modal-listgroup");
 
 class Messenger {
     constructor() {
