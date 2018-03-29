@@ -25,7 +25,7 @@
 
         <!--private message search bar -->
         <div class="search">
-          <input id="search-private" type="text" placeholder="Search" onkeyup="messenger.render_pms()" />
+          <input id="search-private" type="text" placeholder="Search" onkeyup="messenger.render_pms()" autocomplete="off"/>
           <i class="fa fa-search"></i>
         </div>
 
@@ -50,7 +50,7 @@
       <div class="people-list" id="people-list">
 
         <div class="search">
-          <input id="search-group" type="text" placeholder="Search" onkeyup="messenger.render_conversations()" />
+          <input id="search-group" type="text" autocomplete="off" placeholder="Search" onkeyup="messenger.render_conversations()" />
           <i class="fa fa-search"></i>
         </div>
 
@@ -88,7 +88,7 @@
 
                     <div class="form-group">
                         <label class="formHeader" for=search-checklist">Send invites to: </label>
-                      <input id="search-checklist" type="text" placeholder="Search" onkeyup="messenger.render_users_search()" />
+                      <input id="search-checklist" type="text" placeholder="Search" onkeyup="messenger.render_users_search()" autocomplete="off"/>
                       <i class="fa fa-search"></i>
                     </div>
                     <div class="list-group list-group-flush" id="modal-listgroup">

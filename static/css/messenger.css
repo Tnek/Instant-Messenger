@@ -274,5 +274,8 @@ a{
 }
 
 #modal-listgroup .active {
-  outline: 1px solid white;
+  background-color: gray;
+  border-color:darkgray;
 }
+
+
