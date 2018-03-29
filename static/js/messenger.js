@@ -1,132 +1,109 @@
-/** =====================================================================
-  Dummy Database **/
-var contactDatabase2 = ["Roy, Hui", "Felicity, Bi Ling, Alice", "Alice, Nico"];
-var contactDatabase3 = {"Roy": "Hello"};
-var contacts = [];
-var selectedContact = null;
-
-/** =====================================================================
-  Create Groups **/
-
-function loadContacts(){
-  $.getJSON("/users", function(result) {
-    contacts = result;
-    getUsers();
-    getGroupList();
-    getModalList();
-    getCurr();
-  });
-
-  setTimeout(loadContacts, 1000); //3s delay
-}
-
-/** =====================================================================
-  Generate Contact Lists **/
-
-//Private message list
-function getUsers(){
-  privatesearch.render();
-};
-
-//Group message list
-function getGroupList(){
-  groupsearch.render();
-};
-
-//Modal message list 
-function getModalList(){
-  checklistsearch.render();
-};
-
-/** =====================================================================
-  Search Functions **/
-function searchPrivate() {
-  privatesearch.render();
-}
-
-function searchGroup() {
-  groupsearch.render();
-}
-
-function searchChecklist() {
-  checklistsearch.render();
-}
-
-/** =====================================================================
-  SearchBar **/
-class SearchBar {
-  constructor(input, target, is_modal) {
-    this.input = document.getElementById(input);
-    this.target = document.getElementById(target);
-    this.is_modal = is_modal;
+class SideBarList {
+  constructor(input, target) {
+    this.input = input;
+    this.target = target;
   }
 
-  render() {
-    let querystring = this.input.value.toLowerCase();
-    let filteredList = contacts.filter(contact => contact.toLowerCase().indexOf(querystring) > -1);
+  render(list_of_items) {
+    let query = $(this.input).val().toLowerCase();
+    let visible_items = list_of_items.filter(item => item.toLowerCase().indexOf(query) > - 1);
 
-    this.target.innerHTML = '';
+    $(this.target).empty();
 
-    if( this.is_modal == false ){
-      filteredList.map( contact => {
+    visible_items.map( item => {
       $(this.target).append(`
         <li class="clearfix user-li" onclick="getChatWindow(this)">
           <div class="about">
             <div class="name name-field">
               <span class="fa fa-circle online"></span>
-              ${contact}
+              ${item}
             </div>
-          </div>
+          </div> 
         </li>
       `);
-      })
-    }else{
-      filteredList.map( contact => {
-        $(this.target).append(`
-          <div class="form-group">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="gridCheck">
-              <label class="form-check-label name-field" for="gridCheck">${contact}</label>
-            </div>
+    });
+  }
+}
+
+class ModalBox {
+  constructor(input, target) {
+    this.input = input;
+    this.target = target;
+  }
+
+  render(list_of_items) {
+    let query = $(this.input).val().toLowerCase();
+    let visible_items = list_of_items.filter(item => item.toLowerCase().indexOf(query) > - 1);
+
+    $(this.target).empty();
+
+    visible_items.map( item => {
+      $(this.target).append(`
+        <div class="form-group">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="gridCheck">
+            <label class="form-check-label name-field" for="gridCheck">${item}</label>
           </div>
-        `);
-      })
+        </div>
+      `);
+    });
+  }
+}
+
+class Messenger {
+    constructor() {
+        this.selected_conversation = null;
+        this.get_active_contacts();
+        this.get_conversations();
+        this.conversations = {};
+        this.contacts = [];
+
+        this.conversations_bar = new SideBarList("#search-group", "#group-message-list");
+        this.pm_bar = new SideBarList("#search-private", "#private-message-list");
+
+        this.users_search = new ModalBox("#search-checklist", "#checklist-list");
+        this.tick();
     }
-  }
 
+    get_active_contacts() {
+        $.getJSON("/users", contacts => {
+            this.contacts = contacts;
+        });
+        setTimeout(this.get_active_contacts, 1000);
+    }
+
+    get_conversations() {
+        $.getJSON("/conversations", convs => {
+            this.conversations = convs;
+        });
+    }
+
+    render_conversations() { this.conversations_bar.render(Object.keys(this.conversations)); } 
+    render_pms() { this.pm_bar.render(this.contacts); } 
+    render_users_search() { this.users_search.render(this.contacts); }
+
+    render() {
+        this.render_conversations();
+        this.render_pms();
+        this.render_users_search();
+    }
+
+    tick() {
+        $.getJSON("/events", result => {
+            this.render();
+        });
+
+        setTimeout(this.tick.bind(this), 1000);
+    }
 }
 
-var groupsearch = new SearchBar("search-group", "group-message-list", false);
-var privatesearch = new SearchBar("search-private", "private-message-list", false);
-var checklistsearch = new SearchBar("search-checklist", "checklist-list", true);
 
-/** =====================================================================
-  Onclick Chat **/
-function getChatWindow(e){
-  selectedContact = $(e).find('.name').first().html();
-  $("#currUser").html(selectedContact);
-}
+var messenger = new Messenger();
 
-//Get Current Contact
-function getCurr(){
-  if (contacts.indexOf(selectedContact) == -1) {
-    selectedContact = null;
-  }
-  if (!selectedContact) {
-    selectedContact = contacts[0];
-    $("#currUser").html(selectedContact);
-  }
-}
-
-
-/** =====================================================================
-  Onload **/
 $(document).ready(function() {
-    loadContacts();
+    messenger.tick();
 });
 
-/** =====================================================================
-  Constant **/
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
