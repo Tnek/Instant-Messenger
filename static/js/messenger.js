@@ -25,10 +25,13 @@ class SideBarList {
   }
 }
 
-class ModalBox {
-  constructor(input, target) {
+
+class UserSelectModal {
+  constructor(input, target, selected_target) {
     this.input = input;
     this.target = target;
+    this.selected_target = selected_target;
+    this.selected_users = {};
   }
 
   render(list_of_items) {
@@ -36,19 +39,32 @@ class ModalBox {
     let visible_items = list_of_items.filter(item => item.toLowerCase().indexOf(query) > - 1);
 
     $(this.target).empty();
-
     visible_items.map( item => {
-      $(this.target).append(`
-        <div class="form-group">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="gridCheck">
-            <label class="form-check-label name-field" for="gridCheck">${item}</label>
-          </div>
-        </div>
+      if (!this.selected_users.hasOwnProperty(item)) {
+        $(this.target).append(`
+          <button class="list-group-item list-group-item-action" href="#" onclick="users_search.add_to_selected('${item}')">${item}</button>
+        `);
+      }
+    });
+
+    Object.keys(this.selected_users).map( item => {
+      $(this.selected_target).append(`
+        <button class="list-group-item list-group-item-action" href="#" onclick="users_search.remove_selected('${item}')">${item}</button>
       `);
     });
   }
+
+  add_to_selected(user) {
+    this.selected_users[user] = true;
+    messenger.render_users_search();
+  }
+  clear_selected() {
+    this.selected_users = {};
+  }
 }
+
+
+var users_search = new UserSelectModal("#search-checklist", "#modal-listgroup", "#modal-selectedusers");
 
 class Messenger {
     constructor() {
@@ -61,7 +77,7 @@ class Messenger {
         this.conversations_bar = new SideBarList("#search-group", "#group-message-list");
         this.pm_bar = new SideBarList("#search-private", "#private-message-list");
 
-        this.users_search = new ModalBox("#search-checklist", "#checklist-list");
+        users_search = new UserSelectModal("#search-checklist", "#modal-listgroup");
         this.tick();
     }
 
@@ -80,7 +96,7 @@ class Messenger {
 
     render_conversations() { this.conversations_bar.render(Object.keys(this.conversations)); } 
     render_pms() { this.pm_bar.render(this.contacts); } 
-    render_users_search() { this.users_search.render(this.contacts); }
+    render_users_search() { users_search.render(this.contacts); }
 
     render() {
         this.render_conversations();
@@ -105,6 +121,7 @@ $(document).ready(function() {
 });
 
 $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
+  $('[data-toggle="tooltip"]').tooltip();
 })
+$('#newChatModal').on('hide.bs.modal', users_search.clear_selected);
 

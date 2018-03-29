@@ -227,7 +227,8 @@ a{
   border-radius: 10px;
 }
 
-#myModal {
+
+#newChatModal {
   color: black;
 }
 
@@ -258,4 +259,15 @@ a{
   background-color: white;
   border: solid 1px gray;
   color: black;
+}
+
+#titleForm{
+  background-color: white;
+  border: solid 1px gray;
+  color: black;
+}
+
+.formHeader {
+  margin-top: 10px;
+  font-size: 16px;
 }
