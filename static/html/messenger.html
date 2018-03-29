@@ -25,7 +25,7 @@
 
         <!--private message search bar -->
         <div class="search">
-          <input id="search-private" type="text" placeholder="Search" onkeyup="searchPrivate()" />
+          <input id="search-private" type="text" placeholder="Search" onkeyup="messenger.render_pms()" />
           <i class="fa fa-search"></i>
         </div>
 
@@ -50,7 +50,7 @@
       <div class="people-list" id="people-list">
 
         <div class="search">
-          <input id="search-group" type="text" placeholder="Search" onkeyup="searchGroup()" />
+          <input id="search-group" type="text" placeholder="Search" onkeyup="messenger.render_conversations()" />
           <i class="fa fa-search"></i>
         </div>
 
@@ -82,7 +82,7 @@
                   <div class="modal-body">
 
                     <div class="search">
-                      <input id="search-checklist" type="text" placeholder="Search" onkeyup="searchChecklist()" />
+                      <input id="search-checklist" type="text" placeholder="Search" onkeyup="messenger.render_users_search()" />
                       <i class="fa fa-search"></i>
                     </div>
 
@@ -179,8 +179,8 @@
     <script src='http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.0/handlebars.min.js'></script>
     <script src='http://cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js'></script>
 
-    <script src='/static/js/messenger.js'></script>
     <script src='/static/js/chatbox.js'></script>
+    <script src='/static/js/messenger.js'></script>
 
 </body>
 

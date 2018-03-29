@@ -55,10 +55,23 @@ def conversations(req, resp):
 
     resp.headers["Content-Type"] = "application/json"
     user = appdata.users[session["username"]]
-    resp.write(serialize_list(user.conversations))
+    resp.write(serialize_list(conversations))
 
+def create_group(req, resp):
+    session = session_store.get_store(req)
+    if not "username" in session:
+        resp.redirect("/")
+        return
 
-def get_msgs(req, resp):
+    if req.method == "POST":
+        user = appdata.users[session["username"]]
+        participants = req.form["users"].split("&")
+        conv = appdata.new_conversation(participants)
+
+        resp.headers["Content-Type"] = "application/json"
+        resp.redirect("/")
+
+def fetch_events(req, resp):
     session = session_store.get_store(req)
     if not "username" in session:
         resp.redirect("/")
@@ -66,8 +79,8 @@ def get_msgs(req, resp):
 
     resp.headers["Content-Type"] = "application/json"
     user = appdata.users[session["username"]]
-    resp.write(serialize_list(user.get_msgs()))
-
+    resp.write(serialize_list(user.get_events()))
+    
 def msg(req, resp):
     session = session_store.get_store(req)
     if not "username" in session:
@@ -76,15 +89,19 @@ def msg(req, resp):
 
     if req.method == "POST":
         user = appdata.users[session["username"]]
-        contents = req.form["contents"] 
         conv_id = req.form["conv"]
-        conv = appdata.conversations[conv_id]
+        contents = req.form["contents"] 
 
-        appdata.add_msg(Message(user, contents, conv))
+        conv = appdata.get_conv(conv_id)
+        appdata.msg(Message(user, conv, contents))
+
 
 serv.handle("/", index, methods=["GET", "POST"])
-serv.handle("/users", get_users)
 serv.handle("/messenger", messenger, methods=["GET", "POST"])
-serv.handle("/logout", logout)
 serv.handle("/conversations", conversations)
-serv.handle("/msgs", get_msgs)
+serv.handle("/events", fetch_events)
+serv.handle("/users", get_users)
+serv.handle("/logout", logout)
+
+serv.handle("/msg", msg)
+
