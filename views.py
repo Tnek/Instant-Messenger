@@ -55,7 +55,7 @@ def conversations(req, resp):
 
     resp.headers["Content-Type"] = "application/json"
     user = appdata.users[session["username"]]
-    resp.write(serialize_list(conversations))
+    resp.write(serialize_list(user.conversations))
 
 def create_group(req, resp):
     session = session_store.get_store(req)
@@ -63,13 +63,15 @@ def create_group(req, resp):
         resp.redirect("/")
         return
 
+    print(req.form, req.method)
     if req.method == "POST":
         user = appdata.users[session["username"]]
         participants = req.form["users"].split("&")
+        title = req.form["title"]
         conv = appdata.new_conversation(participants)
-
-        resp.headers["Content-Type"] = "application/json"
-        resp.redirect("/")
+        print(appdata.conversations)
+        conv.title = title
+        resp.write(conv.conv_id)
 
 def fetch_events(req, resp):
     session = session_store.get_store(req)
@@ -103,5 +105,6 @@ serv.handle("/events", fetch_events)
 serv.handle("/users", get_users)
 serv.handle("/logout", logout)
 
-serv.handle("/msg", msg)
+serv.handle("/newgroup", create_group, methods=["POST"])
+serv.handle("/msg", msg, methods=["POST"])
 

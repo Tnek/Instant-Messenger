@@ -39,14 +39,6 @@ class UserSelectModal {
 
     $(this.target).empty();
 
-      /*
-    Object.keys(this.selected_users).map( item => {
-      $(this.target).append(`
-        <button class="list-group-item list-group-item-action active" href="#" onclick="users_search.remove_selected('${item}')">${item}</button>
-      `);
-    });
-    */
-
     visible_items.map( item => {
       if (!this.selected_users.hasOwnProperty(item)) {
         $(this.target).append(`
@@ -73,6 +65,12 @@ class UserSelectModal {
   clear_selected() {
     this.selected_users = {};
   }
+  make_group() {
+    $.post("/newgroup", {
+        title: $("#titleForm").val(),
+        users: JSON.stringify(Object.keys(this.selected_users))
+    });
+  }
 }
 
 
@@ -81,8 +79,8 @@ var users_search = new UserSelectModal("#search-checklist", "#modal-listgroup");
 class Messenger {
     constructor() {
         this.selected_conversation = null;
-        this.get_active_contacts();
         this.get_conversations();
+        this.get_active_contacts();
         this.conversations = {};
         this.contacts = [];
 
@@ -117,9 +115,12 @@ class Messenger {
     }
 
     tick() {
+        /*
         $.getJSON("/events", result => {
             this.render();
         });
+        */
+        this.render();
 
         setTimeout(this.tick.bind(this), 1000);
     }

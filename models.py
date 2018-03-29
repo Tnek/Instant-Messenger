@@ -74,6 +74,7 @@ class Messenger(object):
         while not new_uuid in self.conversations:
             new_uuid = uuid.uuid4()
         conv = Conversation("c-"+new_uuid)
+        self.conversations[conv.conv_id] = conv
 
         for u in users:
             conv.add_user(u)

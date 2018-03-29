@@ -60,7 +60,7 @@
 
           <li class="clearfix">
             <div class="about">
-              <div class="name"> GROUP CHAT
+                <div class="name"> <span data-toggle="modal" data-target="#groupsModal"> GROUP CHAT</span>
                 <span data-toggle="modal" data-target="#newChatModal">
                     <img id="create_conv" src="/static/img/addButton.png" data-toggle="tooltip" data-placement="right" title="Create conversation">
                 </span>
@@ -68,12 +68,13 @@
             </div>
           </li>
 
+          <div class="modal fade groupsModal" id="groupsModal" tabindex="-1" role="dialog" aria-labelledby="groupsModal" aria-hidden="true"> </div>
           <!-- Modal -->
-          <div class="modal fade newChatModal" id="newChatModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal fade newChatModal" id="newChatModal" tabindex="-1" role="dialog" aria-labelledby="groupsModal" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Create New Group Chat</h5>
+                  <h5 class="modal-title" id="groupsModal">Create New Group Chat</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -98,7 +99,7 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary" onclick="make_group()">Create</button>
+                    <button type="submit" class="btn btn-primary" onclick="users_search.make_group()">Create</button>
                   </div>
                 </form>
               </div>
