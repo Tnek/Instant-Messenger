@@ -12,7 +12,7 @@ class User(object):
         self.unread_queue = []
         self.event_lock = Lock()
 
-        self.conversations = {}
+        self.conversations = set()
         self.pms = {}
 
     def add_event(self, msg):
@@ -29,23 +29,21 @@ class User(object):
 
 
 class Conversation(object):
-    def __init__(self, conv_id):
+    def __init__(self, title):
         self.participants = set()
-        self.conv_id = conv_id
         self.messages = []
         self.public = False
-        self.title = "New Conversation"
+        self.title = title
 
     def add_user(self, user):
         self.participants.add(user)
         user.conversations.add(self)
 
     def jsonify(self):
-        return json.dumps({
+        return {
                 "title": self.title,
-                "c_id": self.conv_id,
                 "usrs": [pa.uname for pa in self.participants], 
-                "msgs": [msg.jsonify() for msg in self.messages]})
+                "msgs": [msg.jsonify() for msg in self.messages]}
 
         def get_type(self):
             return "conv_create"
@@ -69,17 +67,19 @@ class Messenger(object):
         if uname in self.users:
             del self.users[uname]
 
-    def new_conversation(self, users):
-        new_uuid = uuid.uuid4()
-        while not new_uuid in self.conversations:
-            new_uuid = uuid.uuid4()
-        conv = Conversation("c-"+new_uuid)
-        self.conversations[conv.conv_id] = conv
+    def new_conversation(self, title, users):
+        if title in self.conversations: 
+            return None
+        conv = Conversation(title)
+
+        self.conversations[title] = conv
 
         for u in users:
-            conv.add_user(u)
-            u.add_event(Event(conv))
+            conv.add_user(self.users[u])
+            self.users[u].add_event(Event(conv))
             
+        return conv
+
     def msg(self, msg):
         for u in msg.conv.participants:
             u.add_event(Event(msg))

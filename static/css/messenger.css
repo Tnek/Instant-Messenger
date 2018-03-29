@@ -262,6 +262,10 @@ a{
   background-color: white;
   border: solid 1px gray;
   color: black;
+  border-right-width: 0px;
+  border-left-width: 0px;
+  border-top-width: 0px;
+
 }
 
 .formHeader {
@@ -278,4 +282,8 @@ a{
   border-color:darkgray;
 }
 
-
+#search-checklist {
+  border-right-width: 0px;
+  border-left-width: 0px;
+  border-top-width: 0px;
+}

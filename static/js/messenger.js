@@ -1,7 +1,8 @@
 class SideBarList {
-  constructor(input, target) {
+  constructor(input, target, list_entry_generator) {
     this.input = input;
     this.target = target;
+    this.list_entry_generator = list_entry_generator;
   }
 
   render(list_of_items) {
@@ -11,18 +12,31 @@ class SideBarList {
     $(this.target).empty();
 
     visible_items.map( item => {
-      $(this.target).append(`
-        <li class="clearfix user-li" onclick="getChatWindow(this)">
+      $(this.target).append(this.list_entry_generator(item));
+    });
+  }
+}
+
+function conv_barentry(item) {
+    return `<li class="clearfix user-li" onclick="messenger.select_conv('${item}')">
+          <div class="about">
+            <div class="name name-field">
+               <span class="fa fa-comments online"></span>
+               ${item.slice(1)}
+            </div>
+          </div> 
+        </li>`
+}
+
+function pm_barentry(item) {
+    return `<li class="clearfix user-li" onclick="messenger.select_conv('${item}')">
           <div class="about">
             <div class="name name-field">
               <span class="fa fa-circle online"></span>
               ${item}
             </div>
           </div> 
-        </li>
-      `);
-    });
-  }
+        </li>`
 }
 
 
@@ -48,7 +62,6 @@ class UserSelectModal {
         $(this.target).append(`
           <div class="list-group-item list-group-item-action active" href="#" onclick="users_search.remove_selected('${item}')">${item}</div>
         `);
-
       }
     });
 
@@ -68,8 +81,9 @@ class UserSelectModal {
   make_group() {
     $.post("/newgroup", {
         title: $("#titleForm").val(),
-        users: JSON.stringify(Object.keys(this.selected_users))
+        users: Object.keys(this.selected_users).join("&")
     });
+    $('#newChatModal').modal('hide');
   }
 }
 
@@ -81,11 +95,11 @@ class Messenger {
         this.selected_conversation = null;
         this.get_conversations();
         this.get_active_contacts();
-        this.conversations = {};
+        this.conversations = [];
         this.contacts = [];
 
-        this.conversations_bar = new SideBarList("#search-group", "#group-message-list");
-        this.pm_bar = new SideBarList("#search-private", "#private-message-list");
+        this.conversations_bar = new SideBarList("#search-group", "#group-message-list", conv_barentry);
+        this.pm_bar = new SideBarList("#search-private", "#private-message-list", pm_barentry);
 
         users_search = new UserSelectModal("#search-checklist", "#modal-listgroup");
         this.tick();
@@ -104,7 +118,9 @@ class Messenger {
         });
     }
 
-    render_conversations() { this.conversations_bar.render(Object.keys(this.conversations)); } 
+    render_conversations() { 
+        this.conversations_bar.render(this.conversations.map(values => values.title)); 
+    } 
     render_pms() { this.pm_bar.render(this.contacts); } 
     render_users_search() { users_search.render(this.contacts); }
 
@@ -114,12 +130,22 @@ class Messenger {
         this.render_users_search();
     }
 
+    select_conv(conv) {
+        if (this.conversations.map(values => values.title).indexOf(conv) != -1) {
+            this.selected_conversation = conv;
+            $("#curr_conv").text(conv.slice(1));
+        } else if (this.contacts.indexOf(conv) != -1) {
+            this.selected_conversation = conv;
+            $("#curr_conv").text("Chat with " + conv);
+        } else {
+            this.selected_conversation = null;
+        }
+    }
+
     tick() {
-        /*
         $.getJSON("/events", result => {
             this.render();
         });
-        */
         this.render();
 
         setTimeout(this.tick.bind(this), 1000);

@@ -67,11 +67,10 @@ def create_group(req, resp):
     if req.method == "POST":
         user = appdata.users[session["username"]]
         participants = req.form["users"].split("&")
-        title = req.form["title"]
-        conv = appdata.new_conversation(participants)
-        print(appdata.conversations)
-        conv.title = title
-        resp.write(conv.conv_id)
+        title = "#" + req.form["title"]
+
+        conv = appdata.new_conversation(title, participants)
+        resp.write("OK")
 
 def fetch_events(req, resp):
     session = session_store.get_store(req)
@@ -91,10 +90,8 @@ def msg(req, resp):
 
     if req.method == "POST":
         user = appdata.users[session["username"]]
-        conv_id = req.form["conv"]
         contents = req.form["contents"] 
 
-        conv = appdata.get_conv(conv_id)
         appdata.msg(Message(user, conv, contents))
 
 

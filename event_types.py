@@ -1,3 +1,6 @@
+import time
+import json
+
 class Event(object):
     def __init__(self, contents):
         self.timestamp = time.time()
@@ -17,10 +20,10 @@ class Message(object):
         self.contents = contents
 
     def jsonify(self):
-        json.dumps({"sender": self.sender,
+        return {"sender": self.sender,
                 "msg": self.contents,
                 "ts": self.timestamp,
-                "convo": self.conv.conv_id})
+                "convo": self.conv.conv_id}
 
     def get_type():
         return "msg"
