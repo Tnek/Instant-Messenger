@@ -19,6 +19,9 @@ body {
   height: 600px;
 }
 
+/* ==========================================================
+  people-list */
+
 .people-list {
   height: inherit;
   float: left;
@@ -28,12 +31,11 @@ body {
 .people-list .search {
   padding: 20px;
 }
+
 .people-list input {
   border-radius: 3px;
   border: none;
   padding: 14px;
-  color: white;
-  background: #6A6C75;
   width: 90%;
   font-size: 14px;
 }
@@ -46,8 +48,7 @@ body {
   height: 635px;
 }
 .people-list ul li {
-  margin: 5px 0px;
-  padding-bottom: 13px;
+  padding: 5px 0px 12px 0px;
   border-bottom: solid 0.5px dimgray;
 }
 .people-list img {
@@ -64,6 +65,8 @@ body {
   color: #92959E;
 }
 
+/* ==========================================================
+  chat */
 .chat {
   width: 544px;
   height: inherit;
@@ -75,6 +78,7 @@ body {
   color: #434651;
 }
 .chat .chat-header {
+  height: 68px;
   padding: 20px;
   border-bottom: 2px solid white;
 }
@@ -121,7 +125,6 @@ body {
   width: 90%;
   position: relative;
 }
-
 .chat .chat-history .message:after {
   bottom: 100%;
   left: 7%;
@@ -176,35 +179,41 @@ body {
   color: #75b1e8;
 }
 
-.online, .offline, .me {
+/* ==========================================================
+  online */
+.online, .me {
   margin-right: 5px;
   font-size: 12px;
 }
-
 .online {
   color: #86BB71;
 }
-
-.offline {
-  color: #E38968;
-}
-
 .me {
   color: #94C2ED;
 }
 
+/* ==========================================================
+  list-group */
+
+.list-group{
+  width: 420px;
+}
+.list-group-item {
+  user-select: none; /* Standard */
+}
+
+/* ==========================================================
+  align */
+
 .align-left {
   text-align: left;
 }
-
 .align-right {
   text-align: right;
 }
-
 .float-right {
   float: right;
 }
-
 .clearfix:after {
   visibility: hidden;
   display: block;
@@ -214,6 +223,9 @@ body {
   height: 0;
 }
 
+/* ==========================================================
+  MISC */
+  
 #links{
   text-align: center;
 }
@@ -227,17 +239,13 @@ a{
   border-radius: 10px;
 }
 
-
-#newChatModal {
-  color: black;
+#search-private, #search-group{
+  background: #6A6C75;
+  color: white;
 }
 
 #checklist-list{
   margin-left: 15px;
-}
-
-.form-group{
-  margin-bottom: 8px;
 }
 
 .user-li:hover{
@@ -245,45 +253,26 @@ a{
   background-color: #5b5f6b;
 }
 
-#create_conv{
-  height: 20px;
-  float: right;
-  padding-left: 70px;
+#newChatModal {
+  color: black;
+}
+
+#open_modal_btn{
+  font-size: large;
+  padding-left: 95px;
   cursor: pointer;
 }
 
-#search-checklist{
-  background-color: white;
+.modal-body input{
   border: solid 1px gray;
-  color: black;
 }
 
-#titleForm{
-  background-color: white;
-  border: solid 1px gray;
-  color: black;
-  border-right-width: 0px;
-  border-left-width: 0px;
-  border-top-width: 0px;
-
+#modal-list .active {
+  background-color: gray;
+  border-color:darkgray;
 }
 
 .formHeader {
   margin-top: 10px;
   font-size: 16px;
-}
-
-.list-group-item {
-  user-select: none; /* Standard */
-}
-
-#modal-listgroup .active {
-  background-color: gray;
-  border-color:darkgray;
-}
-
-#search-checklist {
-  border-right-width: 0px;
-  border-left-width: 0px;
-  border-top-width: 0px;
 }

@@ -20,7 +20,7 @@
 
     <div class="container clearfix">
 
-      <!--private messaging list =========================================================== -->
+      <!--Private messaging list =========================================================== -->
       <div class="people-list" id="people-list">
 
         <!--private message search bar -->
@@ -32,9 +32,7 @@
         <ul class="list">
 
           <li class="clearfix">
-            <div class="about">
-              Users
-            </div>
+            <div class="about">Users</div>
           </li>
 
         <!--container for all users -->
@@ -45,30 +43,33 @@
         </ul>
       </div><!--end private messaging list -->
 
-      <!--group messaging list =========================================================== -->
+      <!--Group messaging list =========================================================== -->
 
       <div class="people-list" id="people-list">
 
         <div class="search">
-          <input id="search-group" type="text" autocomplete="off" placeholder="Search" onkeyup="messenger.render_conversations()" />
+          <input id="search-group" type="text" placeholder="Search" onkeyup="messenger.render_conversations()" autocomplete="off"/>
           <i class="fa fa-search"></i>
         </div>
 
-        <!--Begin group message listing --> 
+        <!--begin group message listing --> 
 
         <ul class="list">
 
           <li class="clearfix">
             <div class="about">
-                <div class="name"> <span data-toggle="modal" data-target="#groupsModal"> Channel</span>
-                <span data-toggle="modal" data-target="#newChatModal">
-                    <img id="create_conv" src="/static/img/addButton.png" data-toggle="tooltip" data-placement="right" title="Create conversation">
-                </span>
+                <div class="name">
+                  <span data-toggle="modal" data-target="#groupsModal">Channel</span>
+                  <span data-toggle="modal" data-target="#newChatModal">
+                    <i id="open_modal_btn" class="fa fa-plus-square" src="/static/img/addButton.png" data-toggle="tooltip" data-placement="right" title="Create conversation"></i>
+                    <!-- <img  -->
+                  </span>
               </div>
             </div>
           </li>
 
-          <div class="modal fade groupsModal" id="groupsModal" tabindex="-1" role="dialog" aria-labelledby="groupsModal" aria-hidden="true"> </div>
+<!--           <div class="modal fade groupsModal" id="groupsModal" tabindex="-1" role="dialog" aria-labelledby="groupsModal" aria-hidden="true"></div> -->
+
           <!-- Modal -->
           <div class="modal fade newChatModal" id="newChatModal" tabindex="-1" role="dialog" aria-labelledby="groupsModal" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -81,18 +82,21 @@
                 </div>
                 <form>
                   <div class="modal-body">
+                    <!-- enter Channel Name-->
                     <div class="form-group">
-                        <label class="formHeader" for="titleForm" >Channel Name</label>
-                        <input class="form-control" id="titleForm" type="text" autocomplete=off placeholder="Enter title"></input>
+                      <label class="formHeader" for="titleForm">Channel Name</label>
+                      <input class="form-control" id="titleForm" type="text" autocomplete=off placeholder="Enter title"></input>
                     </div>
 
-
+                    <!-- search users in modal-->
                     <div class="form-group">
-                        <label class="formHeader" for=search-checklist">Send invites to: </label>
-                      <input id="search-checklist" class="titleForm" type="text" placeholder="Search by name" onkeyup="messenger.render_users_search()" autocomplete="off"/>
+                      <label class="formHeader" for="search-checklist">Send invites to: </label>
+                      <input id="search-checklist" type="text" placeholder="Search by name" onkeyup="messenger.render_users_search()" autocomplete="off"/>
                       <i class="fa fa-search"></i>
                     </div>
-                    <div class="list-group list-group-flush" id="modal-listgroup">
+
+                    <!-- list of active users-->
+                    <div class="list-group list-group-flush" id="modal-list">
                         <!--list group list via js -->
                     </div>
 
@@ -113,7 +117,7 @@
         </ul>
       </div> <!--end group messaging list-->
 
-      <!--chat box =========================================================== -->
+      <!--Chat box =========================================================== -->
       <div class="chat">
 
         <div class="chat-header clearfix">
@@ -131,9 +135,7 @@
         
         <div class="chat-message clearfix">
           <textarea name="message-to-send" id="message-to-send" placeholder ="Type your message" rows="2"></textarea>
-          
           <button>Send</button>
-
         </div> <!-- end chat-message -->
 
       </div> <!-- end chat -->
@@ -146,8 +148,6 @@
       <!-- filler options -->
       <a href="#" class="text-center">Help</a> 
     </p>
-
-
 
     
     <!-- HandleBars Template-->
