@@ -1,5 +1,32 @@
-var cycle = -1; //tmp var for chat 
+dummy_conv = [
+    {
+        "sender":"Kent",
+        "msg":"Hi Alice",
+        "ts":"6:01 PM"
+    },
+    {
+        "sender":"Alice",
+        "msg":"You're stupid",
+        "ts":"6:02 PM"
+    },
+    {
+        "sender":"Kent",
+        "msg":":(",
+        "ts":"6:04 PM"
+    },
+    {
+        "sender":"Alice",
+        "msg":"Why did you take 10 years to reply? I'm an old woman now",
+        "ts":"6:04 PM"
+    },
+    {
+        "sender":"Kent",
+        "msg":":(",
+        "ts":"6:04 PM"
+    }
+]
 
+var cycle = -1; //tmp var for chat 
 (function(){
   
   var chat = {
@@ -32,6 +59,7 @@ var cycle = -1; //tmp var for chat
       this.$button.on('click', this.addMessage.bind(this));
       this.$textarea.on('keyup', this.addMessageEnter.bind(this));
     },
+
     render: function() {
       this.scrollToBottom();
       if (this.messageToSend.trim() !== '') { //if nonspace charas are typed

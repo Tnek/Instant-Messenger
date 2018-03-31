@@ -23,7 +23,8 @@ class Message(object):
         return {"sender": self.sender,
                 "msg": self.contents,
                 "ts": self.timestamp,
-                "convo": self.conv.conv_id}
+                "convo": self.conv.title}
 
     def get_type():
         return "msg"
+
