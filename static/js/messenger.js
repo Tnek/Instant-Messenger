@@ -65,8 +65,8 @@ class UserSelectModal {
         `);
       }
     });
-
   }
+
   remove_selected(user) {
     delete this.selected_users[user];
     messenger.render_users_search();
@@ -78,15 +78,17 @@ class UserSelectModal {
   }
   clear_selected() {
     this.selected_users = {};
+    $("input").val('');
   }
   make_group() {
-    if (title) {
+    if ($("#titleForm")) {
       $.post("/newgroup", {
-          title: $("#titleForm").val(),
-          users: Object.keys(this.selected_users).join("&")
+        title: $("#titleForm").val(),
+        users: Object.keys(this.selected_users).join("&")
       });
       $('#newChatModal').modal('hide');
     }
+    this.clear_selected();
   }
 }
 
@@ -104,8 +106,13 @@ class Messenger {
     this.conv_bar = new SideBarList("#search-group", "#group-message-list", conv_barentry);
     this.pm_bar = new SideBarList("#search-private", "#private-message-list", pm_barentry);
 
-    users_search = new UserSelectModal("#search-checklist", "#modal-list");
     this.tick();
+  }
+
+  get_conversations() {
+    $.getJSON("/conversations", convs => {
+      this.conversations = convs;
+    });
   }
 
   get_active_contacts() {
@@ -113,12 +120,6 @@ class Messenger {
       this.contacts = contacts;
     });
     setTimeout(this.get_active_contacts, 1000);
-  }
-
-  get_conversations() {
-    $.getJSON("/conversations", convs => {
-      this.conversations = convs;
-    });
   }
 
   render_conversations() { 
@@ -151,7 +152,6 @@ class Messenger {
     $.getJSON("/events", result => {
       this.render();
     });
-    this.render();
 
     setTimeout(this.tick.bind(this), 1000);
   }
@@ -161,12 +161,11 @@ var messenger = new Messenger();
 
 // Onload ====================================================
 $(document).ready(function() {
-    messenger.tick();
+  messenger.tick();
 });
 
 // Constant ====================================================
 $(function () {
   $('[data-toggle="tooltip"]').tooltip();
 })
-$('#newChatModal').on('hide.bs.modal', users_search.clear_selected);
 
