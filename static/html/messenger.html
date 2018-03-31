@@ -128,16 +128,15 @@
           </div>
         </div> <!-- end chat-header -->
         
-        <div class="chat-history">
-          <ul>
+        <div id="chat-history">
+          <ul id="chat-history-ul">
             <!--append chat messages via js -->
           </ul>
-          
-        </div> <!-- end chat-history -->
-        
+        </div>
+                  
         <div class="chat-message clearfix">
           <textarea name="message-to-send" id="message-to-send" placeholder ="Type your message" rows="2"></textarea>
-          <button>Send</button>
+          <button id="send-button">Send</button>
         </div> <!-- end chat-message -->
 
       </div> <!-- end chat -->
@@ -156,11 +155,11 @@
     <script id="message-template" type="text/x-handlebars-template">
       <li class="clearfix">
         <div class="message-data align-right">
-          <span class="message-data-time" >{{time}}</span> &nbsp; &nbsp;
-          <span class="message-data-name" >{{username}}</span> <i class="fa fa-circle me"></i>
+          <span class="message-data-time" >{{ts}}</span> &nbsp; &nbsp;
+          <span class="message-data-name" >{{sender}}</span> <i class="fa fa-circle me"></i>
         </div>
         <div class="message other-message float-right">
-          {{messageOutput}}
+          {{contents}}
         </div>
       </li>
     </script>
@@ -168,11 +167,11 @@
     <script id="message-response-template" type="text/x-handlebars-template">
       <li>
         <div class="message-data">
-          <span class="message-data-name"><i class="fa fa-circle online"></i>{{username}}</span>
-          <span class="message-data-time">{{time}}</span>
+          <span class="message-data-name"><i class="fa fa-circle online"></i>{{sender}}</span>
+          <span class="message-data-time">{{ts}}</span>
         </div>
         <div class="message my-message">
-          {{response}}
+          {{contents}}
         </div>
       </li>
     </script>
@@ -187,6 +186,7 @@
     <script src='http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.0/handlebars.min.js'></script>
     <script src='http://cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js'></script>
 
+    <script src='/static/js/dummy.js'></script>
     <script src='/static/js/sidebar.js'></script>
     <script src='/static/js/usersmodal.js'></script>
     <script src='/static/js/chatbox.js'></script>
