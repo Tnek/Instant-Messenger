@@ -80,11 +80,13 @@ class UserSelectModal {
     this.selected_users = {};
   }
   make_group() {
-    $.post("/newgroup", {
-      title: $("#titleForm").val(),
-      users: Object.keys(this.selected_users).join("&")
-    });
-    $('#newChatModal').modal('hide');
+    if (title) {
+      $.post("/newgroup", {
+          title: $("#titleForm").val(),
+          users: Object.keys(this.selected_users).join("&")
+      });
+      $('#newChatModal').modal('hide');
+    }
   }
 }
 
