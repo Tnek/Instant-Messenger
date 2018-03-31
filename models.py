@@ -31,7 +31,6 @@ class User(object):
 class Conversation(object):
     def __init__(self, title):
         self.participants = set()
-        self.messages = []
         self.public = False
         self.title = title
 
@@ -42,8 +41,7 @@ class Conversation(object):
     def jsonify(self):
         return {
                 "title": self.title,
-                "usrs": [pa.uname for pa in self.participants], 
-                "msgs": [msg.jsonify() for msg in self.messages]}
+                "usrs": [pa.uname for pa in self.participants]}
 
         def get_type(self):
             return "conv_create"
