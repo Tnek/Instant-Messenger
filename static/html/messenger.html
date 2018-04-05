@@ -59,9 +59,13 @@
           <li class="clearfix">
             <div class="about">
                 <div class="name">
-                  <span data-toggle="modal" data-target="#groupsModal">Channel</span>
+                  <span id="open_global_channel_modal" data-toggle="modal" data-target="#groupsModal">
+                    <span data-toggle="tooltip" data-placement="top" title="Join global channel">
+                      Channel
+                    </span>
+                  </span>
                   <span data-toggle="modal" data-target="#newChatModal">
-                    <i id="open_modal_btn" class="fa fa-plus-square" src="/static/img/addButton.png" data-toggle="tooltip" data-placement="right" title="Create conversation"></i>
+                    <i id="open_my_channel_modal" class="fa fa-plus-square" src="/static/img/addButton.png" data-toggle="tooltip" data-placement="right" title="Create conversation"></i>
                     <!-- <img  -->
                   </span>
               </div>
@@ -71,6 +75,7 @@
           <div class="modal fade groupsModal" id="groupsModal" tabindex="-1" role="dialog" aria-labelledby="groupsModal" aria-hidden="true"></div>
 
           <!-- Modal -->
+          
           <div class="modal fade newChatModal" id="newChatModal" tabindex="-1" role="dialog" aria-labelledby="groupsModal" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
