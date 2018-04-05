@@ -78,6 +78,9 @@ class Messenger(object):
             
         return conv
 
-    def msg(self, msg):
+    def _msg(self, msg):
         for u in msg.conv.participants:
             u.add_event(Event(msg))
+
+    def msg(self, uname, conv, msg):
+        pass

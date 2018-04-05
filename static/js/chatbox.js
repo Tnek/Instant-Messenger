@@ -1,16 +1,18 @@
 // ChatBox ====================================================
 class ChatBox{
-	constructor(chat_history, send_box, send_button){
+	constructor(chat_history, chat_history_list, send_box, send_button){
     this.chat_history = chat_history;
+    this.chat_history_list = chat_history_list;
     this.send_box = send_box;
     this.send_button = send_button;
-	}
+    this.whoami = "";
+  }
 
   bind_events(msg_callback){
     this.msg_callback = msg_callback;
     $(this.send_button).on('click', this.send_msg.bind(this));
     $(this.send_box).on('keyup', this.key_event.bind(this));
-	}
+  }
 
   key_event(event) {
     // enter was pressed
@@ -27,7 +29,7 @@ class ChatBox{
   }
 
   load_messages(messages) {
-    $(this.chat_history).empty();
+    $(this.chat_history_list).empty();
     messages.map(message => this._add_message(message));
     this.scrollToBottom();
   }
@@ -38,24 +40,24 @@ class ChatBox{
   }
 
   _add_message(msg) {
-    if (msg['sender'] == "Alice"){
+    if (msg.sender == this.whoami) {
       var template = Handlebars.compile( $("#message-template").html());
-      $(this.chat_history).append(template(msg));
-
-    } else{
+      $(this.chat_history_list).append(template(msg));
+    } else {
       var templateResponse = Handlebars.compile( $("#message-response-template").html());
-      $(this.chat_history).append(templateResponse(msg));      
+      $(this.chat_history_list).append(templateResponse(msg));
     }
   }
 
   scrollToBottom() {
-    $("#chat-history").scrollTop($("#chat-history")[0].scrollHeight);
+    $(this.chat_history).scrollTop($(this.chat_history)[0].scrollHeight);
   }
 
 }
 
-var chatBox = new ChatBox("#chat-history-ul", "#message-to-send", "#send-button");
+//var chatBox = new ChatBox("#chat-history", "#chat-history-ul", "#message-to-send", "#send-button");
 
+/*
 // Onload ====================================================
 (function(){
   chatBox.load_messages(dummy_conv);
@@ -69,3 +71,4 @@ function dummy_callback(msg) {
 }
 
 chatBox.bind_events(dummy_callback);
+*/

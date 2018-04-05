@@ -92,9 +92,19 @@ def msg(req, resp):
     if req.method == "POST":
         user = appdata.users[session["username"]]
         contents = req.form["contents"] 
+        conv_s = req.form["conv"]
+        conv = None
+        if conv_s in appdata.conversations:
+            conv = conv[conv_s]
+            print(conv)
 
-        appdata.msg(Message(user, conv, contents))
+        if conv:
+            appdata.msg(Message(user, conv, contents))
 
+def whoami(req, resp):
+    session = session_store.get_store(req)
+    if "username" in session:
+        resp.write(session["username"])
 
 serv.handle("/", index, methods=["GET", "POST"])
 serv.handle("/messenger", messenger, methods=["GET", "POST"])
@@ -102,7 +112,7 @@ serv.handle("/conversations", conversations)
 serv.handle("/events", fetch_events)
 serv.handle("/users", get_users)
 serv.handle("/logout", logout)
+serv.handle("/whoami", whoami)
 
 serv.handle("/newgroup", create_group, methods=["POST"])
 serv.handle("/msg", msg, methods=["POST"])
-
