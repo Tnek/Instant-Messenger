@@ -128,7 +128,7 @@ class HTTPRequest(HTTPObject):
     def _parse_query_str(self, data):
         args = data.split("&")
         for item in args:
-            parts = item.split("=")
+            parts = list(map(urldecode, item.split("=")))
             self.args[parts[0]] = "=".join(parts[1:])
 
     def parse_post(self):
