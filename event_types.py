@@ -44,7 +44,7 @@ class Message(object):
 
     def jsonify(self):
         return {"sender": self.sender,
-                "msg": self.contents,
+                "contents": self.contents,
                 "convo": self.conv.title}
 
     def get_type(self):
@@ -61,7 +61,7 @@ class PrivateMessage(object):
 
     def jsonify(self):
         return {"sender": self.sender,
-                "msg": self.contents,
+                "contents": self.contents,
                 "recipient": recipient}
 
     def get_type(self):
