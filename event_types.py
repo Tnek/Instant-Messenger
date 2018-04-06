@@ -25,7 +25,7 @@ class Event(object):
     def jsonify(self):
         return {"ts":self.timestamp,
                 "type":self.contents.get_type(),
-                "event":self.contents.jsonify()
+                "event_obj":self.contents.jsonify()
                 }
 
     def __repr__(self):
