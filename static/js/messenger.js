@@ -66,7 +66,7 @@ class Messenger {
       var message = {
         contents:content,
         sender:this.chatbox.whoami,
-        conv:this.selected_conversation
+        conv:this.selected_conversation.title
       }
   
       $.post("/msg", message)
@@ -84,7 +84,8 @@ class Messenger {
         console.log(this.conversations[e.event_obj.convo]);
         this.conversations[e.event_obj.convo].msgs.push(msg);
 
-        if (e.event_obj.convo == this.selected_conversation) {
+        if (this.selected_conversation && e.event_obj.convo == 
+                                            this.selected_conversation.title) {
           this.chatbox.add_message(msg);
         }
         break;
@@ -98,20 +99,12 @@ class Messenger {
 
   }
 
-  select_conv(conv) {
-    if (Object.values(this.conversations).map(values => values.title).indexOf(conv) != -1) {
-      this.selected_conversation = conv;
-      $("#curr_conv").text(conv);
-      this.chatbox.load_messages(this.conversations[conv].msgs);
-
-    } else if (this.contacts.indexOf(conv) != -1) {
-      this.selected_conversation = conv;
-      $("#curr_conv").text("Chat with " + conv);
-    } else {
-      this.selected_conversation = null;
-      return;
-    }
-
+  select_conv(conv_title) {
+      if (conv_title in this.conversations) {
+        this.selected_conversation = this.conversations[conv_title];
+        this.chatbox.load_messages(this.conversations[conv_title].msgs);
+        $("#curr_conv").text(conv_title);
+      }
   }
 
   tick() {
