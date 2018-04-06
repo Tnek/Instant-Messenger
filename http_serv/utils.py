@@ -1,15 +1,16 @@
 #!/usr/bin/python
+
 # RFC 3986 section 2.2 Reserved Characters (January 2005)
-reserved_chars = {"!","*","'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "#", "[", "]", " "}
+urlenc_reserved_chars = {"!","*","'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "#", "[", "]", " "}
 
 def urlencode(s):
     build = []
     for c in s:
-        if c in reserved_chars:
+        if c in urlenc_reserved_chars:
             build.append("%")
             build.append(hex(ord(c))[2:].upper())
-            continue
-        build.append(c)
+        else:
+            build.append(c)
     return "".join(build)
 
 def urldecode(s):
@@ -31,4 +32,22 @@ def urldecode(s):
         cur += 1
 
 
+    return "".join(build)
+
+html_extra_escaped_chrs = {"'", "`", "!", "@", "$", "%", "(", ")", "=", "+", "{", "}", "[", "]"}
+html_escape_chrs = {
+        "&":"&amp;",
+        "<":"&lt;", 
+        ">":"&gt;", 
+        '"':"&quot;"
+}
+html_escape_chrs.update({i:"&#"+str(ord(i))+";" for i in html_extra_escaped_chrs})
+
+def html_escape(s):
+    build = []
+    for c in s:
+        if c in html_escape_chrs:
+            build.append(html_escape_chrs[c])
+        else:
+            build.append(c)
     return "".join(build)
