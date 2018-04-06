@@ -1,4 +1,37 @@
+class Cookie(dict):
+    """
+        Example usage:
+        cookie_store = Cookie()
+
+        cookie_store["username"] = "alice"
+        cookie_store["username"]["max-age"] = "0"
+
+    """
+    def __init__(self, inp = None):
+        if inp != None:
+            self.load(inp)
+
+    def __setitem__(self, key, value):
+        dict.__setitem__(self, key, CookieAttributes(key, value))
+
+    def export_output(self):
+        resp = []
+        for i in self:
+            resp.append("Set-Cookie: %s\r\n" %(self[i].export_output()))
+
+        return "".join(resp)
+
+    def append_attribute(self, attrib):
+        dict.__setitem__(self, attrib._key, attrib)
+
+    def load(self, inp):
+        cookies = inp.split(";")
+        for cookie in cookies:
+            eq_split = cookie.split("=")
+            self[eq_split[0]] = "=".join(eq_split[1:])
+
 class CookieAttributes(dict):
+    """ Internal Attributes class that allows :class:`Cookie` to work """
     # RFC 2109 lists these attributes as reserved:
     #   path       comment         domain
     #   max-age    secure      version
@@ -41,6 +74,7 @@ class CookieAttributes(dict):
         dict.__setitem__(self, key, value)
 
     def export_output(self):
+        """ Formats cookies attributes for HTTP responses """
         resp = []
         resp.append("%s=%s" %(self._key, self.value))
 
@@ -57,28 +91,4 @@ class CookieAttributes(dict):
 
     def __repr__(self):
         return str(self.value)
-
-class Cookie(dict):
-    def __init__(self, inp = None):
-        if inp != None:
-            self.load(inp)
-
-    def __setitem__(self, key, value):
-        dict.__setitem__(self, key, CookieAttributes(key, value))
-
-    def export_output(self):
-        resp = []
-        for i in self:
-            resp.append("Set-Cookie: %s\r\n" %(self[i].export_output()))
-
-        return "".join(resp)
-
-    def append_attribute(self, attrib):
-        dict.__setitem__(self, attrib._key, attrib)
-
-    def load(self, inp):
-        cookies = inp.split(";")
-        for cookie in cookies:
-            eq_split = cookie.split("=")
-            self[eq_split[0]] = "=".join(eq_split[1:])
 

@@ -4,6 +4,9 @@ import secrets
 from .cookies import *
 
 class Session(dict):
+    """
+        Class to represent key-value storage of session data and management. 
+    """
     def __init__(self, store):
         self.s_id = None
         self.store = store
@@ -30,6 +33,24 @@ class Session(dict):
         resp.cookies.append_attribute(self.options)
 
 class Store(object):
+    """ 
+        Session storage object for getting the Session object of a specific 
+        context.
+
+        Example usage:
+
+            session_store = Store("mysecret")
+
+            def http_serv_route(req, resp):
+                # Gets the session of a specific request
+                session = session_store.get_store(req)
+
+                # To write to the session:
+                session["username"] = "alice"
+
+                # To read from the session:
+                print(session["username"])
+    """
     def __init__(self, secret_key):
         self.secret_key = secret_key
         self.sessions = {}
