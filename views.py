@@ -68,7 +68,7 @@ def create_group(req, resp):
         user = appdata.users[session["username"]]
         #: TODO: proper urldecoding
         participants = req.form["users"].split("%26")
-        title = "#" + req.form["title"]
+        title = req.form["title"]
 
         conv = appdata.new_conversation(title, participants)
         resp.write("OK")
@@ -81,7 +81,8 @@ def fetch_events(req, resp):
 
     resp.headers["Content-Type"] = "application/json"
     user = appdata.users[session["username"]]
-    resp.write(serialize_list(user.get_events()))
+    e = user.get_events()
+    resp.write(serialize_list(e))
     
 def msg(req, resp):
     session = session_store.get_store(req)
@@ -90,16 +91,12 @@ def msg(req, resp):
         return
 
     if req.method == "POST":
-        user = appdata.users[session["username"]]
-        contents = req.form["contents"] 
-        conv_s = req.form["conv"]
-        conv = None
-        if conv_s in appdata.conversations:
-            conv = conv[conv_s]
-            print(conv)
-
-        if conv:
-            appdata.msg(Message(user, conv, contents))
+        user = session["username"]
+        if "contents" in req.form and "conv" in req.form:
+            contents = req.form["contents"] 
+            conv = req.form["conv"]
+            appdata.msg(user, conv, contents)
+            resp.write("OK")
 
 def whoami(req, resp):
     session = session_store.get_store(req)

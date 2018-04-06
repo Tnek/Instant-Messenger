@@ -96,11 +96,14 @@ class Messenger(object):
             :param contents: Contents of the message
             :return: Whether the message was successfully sent
         """
+        print("msg [%s] [%s]" %(sender, conv_title))
         if sender in self.users and conv_title in self.conversations:
+            print(self.conversations)
             sender_obj = self.users[sender]
             conv_obj = self.conversations[conv_title]
 
             if sender_obj in conv_obj.participants:
+                print("sender obj not in participants")
                 msg = Message(sender, conv_obj, contents)
                 for u in conv_obj.participants:
                     u.add_event(Event(msg))
@@ -108,26 +111,3 @@ class Messenger(object):
 
         return False
 
-
-#appdata = Messenger()
-#
-#appdata.register("tnek")
-#appdata.register("alice")
-#
-#appdata.new_conversation("hello", ["alice", "tnek"])
-#
-#tnek = appdata.users["tnek"]
-#alice = appdata.users["alice"]
-#print(tnek.get_events())
-#print(tnek.get_events())
-#appdata.msg("tnek", "hello", "testing message")
-#print(tnek.get_events())
-#print(alice.get_events())
-#appdata.privmsg("tnek", "alice", "privmsg")
-#print(tnek.get_events())
-#print(alice.get_events())
-#
-#appdata.msg("eve", "hello", "testing message")
-#
-#print(tnek.get_events())
-#print(alice.get_events())
