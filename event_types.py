@@ -2,20 +2,42 @@ import time
 import json
 
 class Event(object):
+    """ 
+        Generic wrapper for events. This encapsulates all other types of events.
+
+        To define your own event, include the following methods:
+
+        def jsonify() - 
+            :return: a dictionary of relevant key-vaue pairs to be transmitted for 
+            the event
+
+        def get_type() - 
+            This method may not be necessary if we use the name of the parent 
+            class instead such as with type(self).__name__. 
+
+            :return: a string that signifies the type of event. 
+
+    """
     def __init__(self, contents):
         self.timestamp = time.time()
         self.contents = contents
 
     def jsonify(self):
         return {"ts":self.timestamp,
-                    "type":self.contents.get_type(),
-                    "contents":self.contents.jsonify()
-                    }
+                "type":self.contents.get_type(),
+                "contents":self.contents.jsonify()
+                }
+
     def __repr__(self):
-        return str(self.contents)
+        return str(self.jsonify())
 
 class Message(object):
     def __init__(self, sender, conv, contents):
+        """
+            :param sender: User object representing the sender
+            :param conv: Conversation object representing the conversation
+            :param contents: String with the contents of the message
+        """
         self.conv = conv
         self.sender = sender
         self.contents = contents

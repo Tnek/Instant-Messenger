@@ -8,6 +8,7 @@ from threading import Lock
 from event_types import *
 
 class User(object):
+    """ Object that represents a user. """
     def __init__(self, uname):
         self.uname = uname
         self.unread_queue = []
@@ -49,8 +50,13 @@ class Messenger(object):
         return list(self.users.keys())
 
     def disconnect(self, uname):
+        """ Frees the username by removing the user. """
         if uname in self.users:
+            u_obj = self.users[uname]
+            for conv in u_obj.conversations:
+                conv.participants.remove(u_obj)
             del self.users[uname]
+            del u_obj
 
     def new_conversation(self, title, users):
         """
