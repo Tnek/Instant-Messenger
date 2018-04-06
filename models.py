@@ -27,25 +27,8 @@ class User(object):
         self.event_lock.release()
         return to_ret
 
-
-class Conversation(object):
-    def __init__(self, title):
-        self.participants = set()
-        self.public = False
-        self.title = title
-
-    def add_user(self, user):
-        self.participants.add(user)
-        user.conversations.add(self)
-
-    def jsonify(self):
-        return {
-                "title": self.title,
-                "usrs": [pa.uname for pa in self.participants]}
-
-        def get_type(self):
-            return "conv_create"
-
+    def __repr__(self):
+        return "[User %s]" %(self.uname)
 
 class Messenger(object):
     def __init__(self):
@@ -66,10 +49,18 @@ class Messenger(object):
             del self.users[uname]
 
     def new_conversation(self, title, users):
-        if title in self.conversations: 
-            return None
-        conv = Conversation(title)
+        """
+            Creates a new conversation object.
 
+            :param title: Title of the conversation
+            :param users: List of strings of usernames to be in the conversation
+            :return: Conversation object representing new conversation if the
+                     title wasn't already taken.
+        """
+        if title in self.conversations:
+            return
+
+        conv = Conversation(title)
         self.conversations[title] = conv
 
         for u in users:
@@ -78,9 +69,39 @@ class Messenger(object):
             
         return conv
 
-    def _msg(self, msg):
-        for u in msg.conv.participants:
+
+    def privmsg(self, sender, recipient, contents):
+        sender = self.users[sender]
+        recipient = self.users[recipient]
+        msg = PrivateMessage(sender, recipient, contents)
+        recipient.add_event(Event(msg))
+
+    def msg(self, sender, conv_title, contents):
+        """ 
+            Sends a message to the conversation
+        """
+        sender = self.users[sender]
+        conv = self.conversations[conv_title]
+        msg = Message(sender, conv, contents)
+        for u in conv.participants:
             u.add_event(Event(msg))
 
-    def msg(self, uname, conv, msg):
-        pass
+#
+#appdata = Messenger()
+#
+#appdata.register("tnek")
+#appdata.register("alice")
+#
+#appdata.new_conversation("hello", ["alice", "tnek"])
+#
+#tnek = appdata.users["tnek"]
+#alice = appdata.users["alice"]
+#print(tnek.get_events())
+#print(tnek.get_events())
+#appdata.msg("tnek", "hello", "testing message")
+#print(tnek.get_events())
+#print(alice.get_events())
+#appdata.privmsg("tnek", "alice", "privmsg")
+#print(tnek.get_events())
+#print(alice.get_events())
+#
