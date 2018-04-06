@@ -35,7 +35,9 @@ class Messenger {
   get_conversations() {
     $.getJSON("/conversations", convs => {
       convs.map(conv => {
-        this.conversations[conv.title] = new Conversation(conv.title, conv.usrs);
+        if (!(conv.title in this.conversations)) {
+          this.conversations[conv.title] = new Conversation(conv.title, conv.usrs);
+        }
       });
     });
   }
@@ -53,7 +55,9 @@ class Messenger {
 
   render_pms() { this.pm_bar.render(this.contacts); } 
 
-  render_users_search() { this.users_search.render(this.contacts); }
+  render_users_search() { 
+      this.users_search.render(this.contacts.filter(item => item != this.chatbox.whoami)); 
+  }
 
   render() {
     this.render_conversations();
