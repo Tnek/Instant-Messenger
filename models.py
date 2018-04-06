@@ -1,6 +1,7 @@
 import time
 import json
 import uuid
+import re
 
 from threading import Lock
 
@@ -34,9 +35,10 @@ class Messenger(object):
     def __init__(self):
         self.users = {}
         self.conversations = {}
+        self.uname_filter = re.compile("^[A-Za-z0-9]+$")
 
     def register(self, uname):
-        if uname not in self.users:
+        if uname not in self.users and self.uname_filter.match(uname):
             self.users[uname] = User(uname)
             return True
         return False
