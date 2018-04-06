@@ -69,24 +69,46 @@ class Messenger(object):
             
         return conv
 
-
     def privmsg(self, sender, recipient, contents):
-        sender = self.users[sender]
-        recipient = self.users[recipient]
-        msg = PrivateMessage(sender, recipient, contents)
-        recipient.add_event(Event(msg))
+        """ 
+            Sends a private message to another user.
+
+            :param sender: String of username of the sender
+            :param recipient: String of username of the recipient
+            :param contents: Content of the message
+            :return: Whether the message was successfuly sent
+        """
+        if sender in self.users and recipient in self.users:
+            sender = self.users[sender]
+            recipient = self.users[recipient]
+            msg = PrivateMessage(sender, recipient, contents)
+            recipient.add_event(Event(msg))
+            return True
+
+        return False
 
     def msg(self, sender, conv_title, contents):
         """ 
             Sends a message to the conversation
-        """
-        sender = self.users[sender]
-        conv = self.conversations[conv_title]
-        msg = Message(sender, conv, contents)
-        for u in conv.participants:
-            u.add_event(Event(msg))
 
-#
+            :param sender: String of username of the sender
+            :param conv_title: String of conversation title
+            :param contents: Contents of the message
+            :return: Whether the message was successfully sent
+        """
+        if sender in self.users and conv_title in self.conversations:
+            sender_obj = self.users[sender]
+            conv_obj = self.conversations[conv_title]
+
+            if sender_obj in conv_obj.participants:
+                msg = Message(sender, conv_obj, contents)
+                for u in conv_obj.participants:
+                    u.add_event(Event(msg))
+                return True
+
+        return False
+
+
 #appdata = Messenger()
 #
 #appdata.register("tnek")
@@ -105,3 +127,7 @@ class Messenger(object):
 #print(tnek.get_events())
 #print(alice.get_events())
 #
+#appdata.msg("eve", "hello", "testing message")
+#
+#print(tnek.get_events())
+#print(alice.get_events())
