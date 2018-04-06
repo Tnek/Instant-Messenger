@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # RFC 3986 section 2.2 Reserved Characters (January 2005)
-reserved_chars = {"!","*","'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "#", "[", "]"}
+reserved_chars = {"!","*","'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "#", "[", "]", " "}
 
 def urlencode(s):
     build = []
@@ -24,7 +24,11 @@ def urldecode(s):
             cur += 3
             continue
 
-        build.append(s[cur])
+        if s[cur] == "+":
+            build.append(" ")
+        else: 
+            build.append(s[cur])
         cur += 1
+
 
     return "".join(build)
