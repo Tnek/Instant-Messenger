@@ -23,10 +23,9 @@ class Message(object):
     def jsonify(self):
         return {"sender": self.sender,
                 "msg": self.contents,
-                "ts": self.timestamp,
                 "convo": self.conv.title}
 
-    def get_type():
+    def get_type(self):
         return "msg"
 
     def __repr__(self):
@@ -41,10 +40,9 @@ class PrivateMessage(object):
     def jsonify(self):
         return {"sender": self.sender,
                 "msg": self.contents,
-                "ts": self.timestamp,
                 "recipient": recipient}
 
-    def get_type():
+    def get_type(self):
         return "privmsg"
 
     def __repr__(self):
@@ -65,8 +63,8 @@ class Conversation(object):
                 "title": self.title,
                 "usrs": [pa.uname for pa in self.participants]}
 
-        def get_type(self):
-            return "conv_create"
+    def get_type(self):
+        return "conv_create"
     def __repr__(self):
         return "Conversation %s (%s)" %(self.title, ", ".join(map(str, self.participants)))
 

@@ -63,11 +63,11 @@ def create_group(req, resp):
         resp.redirect("/")
         return
 
-    print(req.form, req.method)
     if req.method == "POST":
+        print("create group")
         user = appdata.users[session["username"]]
-        #: TODO: proper urldecoding
-        participants = req.form["users"].split("%26")
+        participants = req.form["users"].split("&")
+        print(participants)
         title = req.form["title"]
 
         conv = appdata.new_conversation(title, participants)

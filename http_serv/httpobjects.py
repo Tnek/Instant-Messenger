@@ -2,6 +2,7 @@ import mimetypes
 
 from .buffered_io import StringBuffer, FileBuffer
 from .cookies import Cookie
+from .utils import urldecode
 
 class HTTPObject(object):
     def __init__(self, version="HTTP/1.1"):
@@ -133,5 +134,5 @@ class HTTPRequest(HTTPObject):
     def parse_post(self):
         fields = self.data.values().split("&")
         for field in fields:
-            field_s = field.split("=")
+            field_s = list(map(urldecode, field.split("=")))
             self.form[field_s[0]] = "=".join(field_s[1:])
