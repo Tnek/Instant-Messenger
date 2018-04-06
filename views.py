@@ -50,7 +50,7 @@ def conversations(req, resp):
     session = session_store.get_store(req)
 
     if not "username" in session:
-        resp.redirect("/")
+        resp.forbidden()
         return
 
     resp.headers["Content-Type"] = "application/json"
@@ -60,7 +60,7 @@ def conversations(req, resp):
 def create_group(req, resp):
     session = session_store.get_store(req)
     if not "username" in session:
-        resp.redirect("/")
+        resp.forbidden()
         return
 
     if req.method == "POST":
@@ -70,11 +70,12 @@ def create_group(req, resp):
         title = req.form["title"]
         conv = appdata.new_conversation(title, participants)
         resp.write("OK")
-
+    resp.forbidden()
+    
 def fetch_events(req, resp):
     session = session_store.get_store(req)
     if not "username" in session:
-        resp.redirect("/")
+        resp.forbidden()
         return
 
     resp.headers["Content-Type"] = "application/json"
@@ -85,21 +86,41 @@ def fetch_events(req, resp):
 def msg(req, resp):
     session = session_store.get_store(req)
     if not "username" in session:
-        resp.redirect("/")
+        resp.forbidden()
         return
 
     if req.method == "POST":
-        user = session["username"]
         if "contents" in req.form and "conv" in req.form:
+            user = session["username"]
             contents = req.form["contents"] 
             conv = req.form["conv"]
             appdata.msg(user, conv, contents)
             resp.write("OK")
+    else:
+        resp.forbidden()
+
+def priv_msg(req, resp):
+    session = session_store.get_store(req)
+    if not "username" in session:
+        resp.forbidden()
+        return
+    if req.method == "POST":
+        if "contents" in req.form and "recipient" in req.form:
+            user = session["username"]
+            contents = req.form["contents"]
+            recipient = req.form["recipient"]
+            appdata.privmsg(user, recipient, contents)
+            resp.write("OK")
+
+    else:
+        resp.forbidden()
 
 def whoami(req, resp):
     session = session_store.get_store(req)
     if "username" in session:
         resp.write(session["username"])
+    else:
+        resp.forbidden()
 
 serv.handle("/", index, methods=["GET", "POST"])
 serv.handle("/messenger", messenger, methods=["GET", "POST"])
@@ -111,3 +132,4 @@ serv.handle("/whoami", whoami)
 
 serv.handle("/newgroup", create_group, methods=["POST"])
 serv.handle("/msg", msg, methods=["POST"])
+serv.handle("/priv_msg", priv_msg, methods=["POST"])

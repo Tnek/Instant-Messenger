@@ -1,17 +1,15 @@
 // UserSelectModal ====================================================
-class UserSelectModal {
+class UserSelectModal extends SearchableItem {
   constructor(input, target) {
-    this.input = input;
-    this.target = target;
+    super(input, target);
     this.selected_users = {};
   }
 
-  render(list_of_items) {
-    let query = $(this.input).val().toLowerCase();
-    let visible_items = list_of_items.filter(item => item.toLowerCase().indexOf(query) > - 1);
+  filter_function(query, items) {
+    return items.filter(item => item.toLowerCase().indexOf(query) > -1);
+  }
 
-    $(this.target).empty();
-
+  render_function(visible_items) {
     visible_items.map( item => {
       if (!this.selected_users.hasOwnProperty(item)) {
         $(this.target).append(`

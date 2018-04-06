@@ -62,7 +62,7 @@ class PrivateMessage(object):
     def jsonify(self):
         return {"sender": self.sender,
                 "contents": self.contents,
-                "recipient": recipient}
+                "recipient": self.recipient}
 
     def get_type(self):
         return "privmsg"

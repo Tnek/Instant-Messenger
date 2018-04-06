@@ -89,9 +89,12 @@ class Messenger(object):
             :return: Whether the message was successfuly sent
         """
         if sender in self.users and recipient in self.users:
-            recipient = self.users[recipient]
             msg = PrivateMessage(sender, recipient, contents)
-            recipient.add_event(Event(msg))
+            msg_event = Event(msg)
+
+            self.users[sender].add_event(msg_event)
+            if sender != recipient:
+                self.users[recipient].add_event(msg_event)
             return True
 
         return False
