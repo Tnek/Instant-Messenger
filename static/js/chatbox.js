@@ -1,5 +1,5 @@
 // ChatBox ====================================================
-class ChatBox{
+class ChatBox {
 	constructor(chat_history, chat_history_list, send_box, send_button){
     this.chat_history = chat_history; //chat history div
     this.chat_history_list = chat_history_list; //chat history ul

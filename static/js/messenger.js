@@ -1,10 +1,18 @@
+class Conversation {
+    constructor(title, users) {
+        this.title = title;
+        this.msgs = [];
+        this.unread = false;
+        this.users = users;
+    }
+}
 // Messenger ====================================================
 class Messenger {
   constructor() {
     this.selected_conversation = null;
     this.get_conversations();
     this.get_active_contacts();
-    this.conversations = [];
+    this.conversations = {};
     this.contacts = [];
 
     this.conv_bar = new SideBarList("#search-group", "#group-message-list", conv_barentry);
@@ -27,8 +35,7 @@ class Messenger {
   get_conversations() {
     $.getJSON("/conversations", convs => {
       convs.map(conv => {
-          this.conversations[conv.title] = conv;
-          conv.msgs = [];
+        this.conversations[conv.title] = new Conversation(conv.title, conv.usrs);
       });
     });
   }
@@ -55,24 +62,46 @@ class Messenger {
   }
 
   send_message(content) {
-    var message = {
-      contents:content,
-      sender:this.chatbox.whoami,
-      conv:this.selected_conversation
+    if (this.selected_conversation) {
+      var message = {
+        contents:content,
+        sender:this.chatbox.whoami,
+        conv:this.selected_conversation
+      }
+  
+      $.post("/msg", message)
     }
-    this.chatbox.add_message(message);
-
-    $.post("/msg", message)
   }
 
   handle_event(e) {
+    switch (e.type) {
+      case "msg":
+        var msg = {
+          contents: e.event_obj.contents,
+          sender: e.event_obj.sender,
+          ts: e.ts
+        }
+        console.log(this.conversations[e.event_obj.convo]);
+        this.conversations[e.event_obj.convo].msgs.push(msg);
+
+        if (e.event_obj.convo == this.selected_conversation) {
+          this.chatbox.add_message(msg);
+        }
+        break;
+
+      case "conv_create":
+        var conv = e.event_obj;
+        this.conversations[conv.title] = new Conversation(conv.title, conv.usrs);
+        this.render_conversations();
+        break;
+    }
 
   }
 
   select_conv(conv) {
     if (Object.values(this.conversations).map(values => values.title).indexOf(conv) != -1) {
       this.selected_conversation = conv;
-      $("#curr_conv").text(conv.slice(1));
+      $("#curr_conv").text(conv);
       this.chatbox.load_messages(this.conversations[conv].msgs);
 
     } else if (this.contacts.indexOf(conv) != -1) {
@@ -86,9 +115,10 @@ class Messenger {
   }
 
   tick() {
-    $.getJSON("/events", e => {
-        console.log(e);
-      this.handle_event(e);
+    $.getJSON("/events", events => {
+        events.map(e => {
+            this.handle_event(e);
+        });
       this.render();
     });
 

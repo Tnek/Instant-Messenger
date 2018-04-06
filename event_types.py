@@ -34,7 +34,7 @@ class Event(object):
 class Message(object):
     def __init__(self, sender, conv, contents):
         """
-            :param sender: User object representing the sender
+            :param sender: String of sender's username
             :param conv: Conversation object representing the conversation
             :param contents: String with the contents of the message
         """

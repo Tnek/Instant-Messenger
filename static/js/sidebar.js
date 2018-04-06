@@ -23,14 +23,14 @@ function conv_barentry(item) {
             <div class="about">
               <div class="name name-field">
                <span class="fa fa-comments online"></span>
-               ${item.slice(1)}
+               ${item}
               </div>
             </div> 
           </li>`
 }
 
 function pm_barentry(item) {
-  return `<li class="clearfix user-li" onclick="messenger.select_conv('${item}')">
+  return `<li class="clearfix user-li" onclick="messenger.select_pm('${item}')">
             <div class="about">
               <div class="name name-field">
                 <span class="fa fa-circle online"></span>
