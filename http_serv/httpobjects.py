@@ -27,7 +27,11 @@ class HTTPObject(object):
 
 class HTTPResponse(HTTPObject):
     """
-        HTTP Object modeling an HTTP response.
+        HTTP Object modeling an HTTP response.  
+
+        This HTTPResponse object implements the BufferedIO interface defined in 
+        :file:`buffered_io.py` so that transmission of larger responses can be 
+        buffered.
 
         From rfc2616:
 
@@ -50,6 +54,11 @@ class HTTPResponse(HTTPObject):
         self.headers["Content-Type"] = "text/html; charset=utf-8"
 
     def reset_data(self):
+        """ 
+            Empty data field of the response. Call this method instead of 
+            setting .data to empty so that length and :method:`write` still work
+            correctly.
+        """
         self.data_len = 0
         self.data = StringBuffer()
 
@@ -57,6 +66,11 @@ class HTTPResponse(HTTPObject):
         return "%s %s %s\r\n" %(self.version, self.status_code, self.reason_phrase)
 
     def read(self, nbytes):
+        """
+            Implementation of :method:`read` from the BufferedIO interface 
+            defined in buffered_io.py. This allows for a buffered write of the 
+            HTTP response which the server should respond with.
+        """
         if self._main_resp == None:
             header = self.export_statusline() + self.export_headers() + \
                      self.cookies.export_output() + '\r\n'
@@ -69,13 +83,23 @@ class HTTPResponse(HTTPObject):
         return resp
 
     def write(self, data):
+        """ Append data to the response.  """
         self.data_len += len(data)
         self.data.write(data)
 
     def close(self):
+        """ 
+            Implementation of :method:`close` from the BufferedIO interface 
+            defined in buffered_io.py.
+        """
         pass
 
     def redirect(self, new_uri):
+        """
+            Turn object into a redirect
+
+            :param new_uri: New location
+        """
         self.status_code = 302
         self.reason_phrase = "Found"
         self.headers["Location"] = new_uri
@@ -89,11 +113,17 @@ class HTTPResponse(HTTPObject):
                     '</BODY></HTML>' %(new_uri))
         
     def send_file(self, file_dir):
+        """
+            Does a buffered transmission of a larger file.
+
+            :param file_dir: Directory of the file to respond with
+        """
         self.headers["Content-Type"] = mimetypes.guess_type(file_dir)[0]
         self.data = FileBuffer(file_dir)
         self.data_len = self.data.size()
 
     def forbidden(self):
+        """ Turn object into a 403 Forbidden """
         self.status_code = 403
         self.reason_phrase = "Forbidden"
         self.reset_data()

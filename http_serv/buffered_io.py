@@ -1,6 +1,7 @@
 import os.path
 
 class FileBuffer(object):
+    """ Buffered file I/O that conforms to the interface defined here """
     def __init__(self, directory):
         self.file_dir = directory
         self.file_hand = None

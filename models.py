@@ -93,6 +93,8 @@ class Messenger(object):
             msg_event = Event(msg)
 
             self.users[sender].add_event(msg_event)
+
+            # Avoid double-sending when talking to yourself
             if sender != recipient:
                 self.users[recipient].add_event(msg_event)
             return True
@@ -108,9 +110,7 @@ class Messenger(object):
             :param contents: Contents of the message
             :return: Whether the message was successfully sent
         """
-        print("msg [%s] [%s]" %(sender, conv_title))
         if sender in self.users and conv_title in self.conversations:
-            print(self.conversations)
             sender_obj = self.users[sender]
             conv_obj = self.conversations[conv_title]
 
