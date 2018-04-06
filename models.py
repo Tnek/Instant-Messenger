@@ -16,9 +16,11 @@ class User(object):
         self.conversations = set()
         self.pms = {}
 
-    def add_event(self, msg):
+    def add_event(self, e):
+        """ Adds an Event (see :class Event:`event_types.py`) to the user's message 
+        queue """
         self.event_lock.acquire()
-        self.unread_queue.append(msg)
+        self.unread_queue.append(e)
         self.event_lock.release()
 
     def get_events(self):
@@ -35,10 +37,10 @@ class Messenger(object):
     def __init__(self):
         self.users = {}
         self.conversations = {}
-        self.uname_filter = re.compile("^[A-Za-z0-9]+$")
+        self.alphanum_filter = re.compile("^[A-Za-z0-9]+$")
 
     def register(self, uname):
-        if uname not in self.users and self.uname_filter.match(uname):
+        if uname not in self.users and self.alphanum_filter.match(uname):
             self.users[uname] = User(uname)
             return True
         return False
@@ -59,7 +61,7 @@ class Messenger(object):
             :return: Conversation object representing new conversation if the
                      title wasn't already taken.
         """
-        if title in self.conversations:
+        if title in self.conversations or not self.alphanum_filter.match(title):
             return
 
         conv = Conversation(title)
@@ -105,7 +107,6 @@ class Messenger(object):
             conv_obj = self.conversations[conv_title]
 
             if sender_obj in conv_obj.participants:
-                print("sender obj not in participants")
                 msg = Message(sender, conv_obj, contents)
                 for u in conv_obj.participants:
                     u.add_event(Event(msg))

@@ -68,7 +68,6 @@ def create_group(req, resp):
         participants = req.form["users"].split("&")
         participants.append(user)
         title = req.form["title"]
-
         conv = appdata.new_conversation(title, participants)
         resp.write("OK")
 
@@ -101,9 +100,6 @@ def whoami(req, resp):
     session = session_store.get_store(req)
     if "username" in session:
         resp.write(session["username"])
-
-appdata.register("test1")
-appdata.register("test2")
 
 serv.handle("/", index, methods=["GET", "POST"])
 serv.handle("/messenger", messenger, methods=["GET", "POST"])
