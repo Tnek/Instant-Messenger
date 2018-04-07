@@ -1,48 +1,3 @@
-class Conversation {
-  constructor(title, users) {
-    this.title = title;
-    this.msgs = [];
-    this.unread = false;
-    this.selected = false;
-    this.users = users;
-    this.is_conv();
-  }
-  is_pm() {
-    this.callback_func = "messenger.select_pm";
-    this.icon = "fa fa-user";
-    this.type = "privmsg";
-  }
-
-  is_conv() {
-    this.callback_func = "messenger.select_conv";
-    this.icon = "fa fa-comments";
-    this.type = "channel";
-  }
-
-  select() {
-    this.selected = true;
-    this.unread = false;
-  }
-
-  render() {
-    var icon_status = "readicon";
-    if (this.unread) {
-      icon_status = "unread";
-    }
-
-    var attrib = "user-li";
-    if (this.selected) {
-      attrib = "user-li-selected";
-    }
-    return `<li class="clearfix ${attrib}" onclick="${this.callback_func}('${this.title}')">
-            <div class="about">
-              <div class="name name-field">
-               <span class="${this.icon} ${icon_status}"></span> ${this.title}
-              </div>
-            </div> 
-          </li>`
-  }
-}
 // Messenger ====================================================
 class Messenger {
   constructor() {
@@ -59,8 +14,6 @@ class Messenger {
     this.users_search = new UserSelectModal("#search-checklist", "#modal-list", this.render_users_search.bind(this));
     this.chatbox = new ChatBox("#chat-history", "#chat-history-ul", "#message-to-send", "#send-button");
     this.chatbox.bind_events(this.send_message.bind(this));
-
-    this.run();
   }
 
   get_whoami() {
@@ -72,34 +25,36 @@ class Messenger {
   whoami() {
     return this.chatbox.whoami;
   }
-
+    
   get_conversations() {
     $.getJSON("/conversations", convs => {
+      let new_convos = {}
       convs.map(conv => {
-        if (!(conv.title in this.conversations)) {
-          let conv_obj = new Conversation(conv.title, conv.usrs);
-          conv_obj.is_conv();
-          this.conversations[conv.title] = conv_obj;
+        if (conv.title in this.conversations) {
+          new_convos[conv.title] = this.conversations[conv.title];
+        } else {
+          let conv_obj = new Channel(conv.title, conv.usrs);
+          new_convos[conv.title] = conv_obj;
         }
       });
+      this.conversations = new_convos;
+      this.render_conversations();
     });
   }
 
   get_active_contacts() {
-    $.getJSON("/users", usrs => {
-      let new_contacts = {}
-      usrs.map(contact => {
-        if (contact in this.contacts) {
-          new_contacts[contact] = this.contacts[contact];
-        } else {
-          let conv_obj = new Conversation(contact, contact);
-          conv_obj.is_pm();
-          new_contacts[contact] = conv_obj;
-        }
+      let new_contacts = {};
+      $.getJSON("/users", usrs => {
+        usrs.map(contact => {
+          if (contact in this.contacts) {
+            new_contacts[contact] = this.contacts[contact];
+          } else {
+            new_contacts[contact] = new PrivateMessages(contact);
+          }
+        });
+        this.contacts = new_contacts;
+        this.render_pms();
       });
-      this.contacts = new_contacts;
-      this.render();
-    });
     setTimeout(this.get_active_contacts.bind(this), 1000);
   }
 
@@ -114,9 +69,6 @@ class Messenger {
   }
 
   render() {
-    if (!this.selected_conversation) {
-      this.select_conv(Object.keys(this.conversations)[0]);
-    }
     this.render_conversations();
     this.render_pms();
     this.render_users_search();
@@ -124,122 +76,22 @@ class Messenger {
 
   send_message(content) {
     if (this.selected_conversation) {
-      var message;
-      if (this.selected_conversation.type == "channel") {
-        message = {
-          contents:content,
-          conv:this.selected_conversation.title
-        }
-    
-        $.post("/msg", message)
-
-      } else if (this.selected_conversation.type == "privmsg") {
-        message = {
-          recipient:this.selected_conversation.users,
-          contents:content
-        }
-        $.post("/priv_msg", message);
-      }
-
-      message.sender = this.whoami();
-      this.chatbox.add_message(message);
+      let msg = this.selected_conversation.send_msg(content);
+      msg.sender = this.whoami();
+      this.chatbox.add_message(msg);
     }
   }
 
-  handle_event(e) {
-    switch (e.type) {
-      case "msg":
-        let msg = {
-          contents: e.event_obj.contents,
-          sender: e.event_obj.sender,
-          ts: e.ts
-        }
-        this.conversations[e.event_obj.convo].msgs.push(msg);
-        if (e.event_obj.sender != this.whoami()) {
-          this.conversations[e.event_obj.convo].unread = true;
-          this.render_conversations();
-
-          if (this.selected_conversation && e.event_obj.convo == 
-                                              this.selected_conversation.title) {
-            this.chatbox.add_message(msg);
-          } 
-        }
-
-        break;
-
-      case "conv_create":
-        let conv = e.event_obj;
-        this.conversations[conv.title] = new Conversation(conv.title, conv.usrs);
-        this.conversations[conv.title].unread = true; 
-
-        this.render_conversations();
-        break;
-
-      case "privmsg":
-        console.log(e);
-        let pm = {
-          contents: e.event_obj.contents,
-          sender: e.event_obj.sender,
-          ts: e.ts
-        }
-
-        let target_pm = e.event_obj.recipient;
-        if (e.event_obj.recipient == this.whoami()) {
-          target_pm = e.event_obj.sender;
-          this.contacts[target_pm].unread = true;
-          this.render_pms();
-          if (this.selected_conversation && this.contacts[target_pm].title == 
-                                                this.selected_conversation.title) {
-            this.chatbox.add_message(pm);
-          }
-        }
-
-        this.contacts[target_pm].msgs.push(pm)
-
-        break;
+  select_conv(conversation) {
+    if (this.selected_conversation) {
+      this.selected_conversation.unselect();
     }
-  }
-
-  re_render_conv_bar(conversation) {
-    if (conversation.type == "channel") {
-      this.render_conversations();
-    } else if (conversation.type == "privmsg") {
-      this.render_pms();
-    }
-  }
-    
-  _select_conv(conversation) {
-    let old_conv = this.selected_conversation;
-
     this.selected_conversation = conversation;
-    this.selected_conversation.select();
-
-    if (old_conv) {
-      old_conv.selected = false;
-      this.re_render_conv_bar(old_conv);
-    }
-    this.re_render_conv_bar(this.selected_conversation);
-
     this.chatbox.load_messages(conversation.msgs);
+
     $("#curr_conv").text(conversation.title);
-
-  }
-  select_conv(conv_title) {
-    if (conv_title in this.conversations) {
-      this._select_conv(this.conversations[conv_title]);
-    }
   }
 
-  select_pm(contact) {
-    if (contact in this.contacts) {
-      this._select_conv(this.contacts[contact]);
-    }
-  }
-
-  run() {
-    this.render();
-    this.tick();
-  }
   tick() {
     $.getJSON("/events", events => {
       events.map(e => {
@@ -249,13 +101,56 @@ class Messenger {
 
     setTimeout(this.tick.bind(this), 1000);
   }
+
+  handle_event(e) {
+    console.log(e)
+    var relevant_conv;
+    switch (e.type) {
+      case "conv_create":
+        let conv = e.event_obj;
+        this.conversations[conv.title] = new Channel(conv.title, conv.usrs);
+        this.conversations[conv.title].unread = true; 
+
+        this.render_conversations();
+        return;
+
+      case "privmsg":
+        let target = e.event_obj.recipient == this.whoami() ? 
+                e.event_obj.sender : e.event_obj.recipient;
+        relevant_conv = this.contacts[target];
+        break;
+      case "msg":
+        relevant_conv = this.conversations[e.event_obj.convo];
+        break;
+      default:
+        return
+    }
+
+    let msg = {
+      contents: e.event_obj.contents,
+      sender: e.event_obj.sender,
+      ts: e.ts
+    }
+
+    relevant_conv.add_msg(msg);
+
+    if (e.event_obj.sender != this.whoami()) {
+      relevant_conv.unread = true;
+      this.render_conversations();
+      this.render_pms();
+
+      if (this.selected_conversation && relevant_conv === this.selected_conversation) { 
+        this.chatbox.add_message(msg);
+      }
+    }
+  }
 }
 
 var messenger = new Messenger();
 
 // Onload ====================================================
 $(document).ready(function() {
-  messenger.run();
+  messenger.tick();
 });
 
 // Constant ====================================================

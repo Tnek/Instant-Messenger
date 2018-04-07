@@ -7,7 +7,7 @@ class UserSelectModal extends SelectableList {
     if ($("#titleForm")) {
       $.post("/newgroup", {
         title: $("#titleForm").val(),
-        users: Object.keys(this.selected_users).join("&")
+        users: Object.keys(this.selected_items).join("&")
       });
       $('#newChatModal').modal('hide');
     }
