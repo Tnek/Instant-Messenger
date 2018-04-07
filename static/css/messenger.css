@@ -256,6 +256,10 @@ a{
   background-color: #5b5f6b;
 }
 
+.user-li-selected{
+  background-color: #5b5f6b;
+}
+
 #newChatModal {
   color: black;
 }
@@ -266,9 +270,11 @@ a{
   cursor: pointer;
 }
 
-#open_global_channel_modal{
+#open_global_channel_modal:hover{
+  background-color: #5b5f6b;
   cursor: pointer;
 }
+
 
 .modal-body input{
   border: solid 1px gray;
@@ -283,3 +289,4 @@ a{
   margin-top: 10px;
   font-size: 16px;
 }
+

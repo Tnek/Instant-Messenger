@@ -1,10 +1,46 @@
 class Conversation {
-  constructor(title, users, type) {
+  constructor(title, users) {
     this.title = title;
     this.msgs = [];
     this.unread = false;
+    this.selected = false;
     this.users = users;
-    this.type = type;
+    this.is_conv();
+  }
+  is_pm() {
+    this.callback_func = "messenger.select_pm";
+    this.icon = "fa fa-circle";
+    this.type = "privmsg";
+  }
+
+  is_conv() {
+    this.callback_func = "messenger.select_conv";
+    this.icon = "fa fa-comments";
+    this.type = "channel";
+  }
+
+  select() {
+    this.selected = true;
+    this.unread = false;
+  }
+
+  render() {
+    var icon_status = "readicon";
+    if (this.unread) {
+      icon = "unread";
+    }
+
+    var attrib = "user-li";
+    if (this.selected) {
+        attrib = "user-li-selected";
+    }
+    return `<li class="clearfix ${attrib}" onclick="${this.callback_func}('${this.title}')">
+            <div class="about">
+              <div class="name name-field">
+               <span class="${this.icon} ${icon_status}"></span> ${this.title}
+              </div>
+            </div> 
+          </li>`
   }
 }
 // Messenger ====================================================
@@ -16,8 +52,8 @@ class Messenger {
     this.get_conversations();
     this.get_active_contacts();
 
-    this.conv_bar = new SideBarList("#search-group", "#group-message-list", conv_barentry);
-    this.pm_bar = new SideBarList("#search-private", "#private-message-list", pm_barentry);
+    this.conv_bar = new SideBarList("#search-group", "#group-message-list");
+    this.pm_bar = new SideBarList("#search-private", "#private-message-list");
 
     this.users_search = new UserSelectModal("#search-checklist", "#modal-list");
     this.chatbox = new ChatBox("#chat-history", "#chat-history-ul", "#message-to-send", "#send-button");
@@ -41,7 +77,9 @@ class Messenger {
     $.getJSON("/conversations", convs => {
       convs.map(conv => {
         if (!(conv.title in this.conversations)) {
-          this.conversations[conv.title] = new Conversation(conv.title, conv.usrs, "channel");
+          let conv_obj = new Conversation(conv.title, conv.usrs);
+          conv_obj.is_conv();
+          this.conversations[conv.title] = conv_obj;
         }
       });
     });
@@ -51,7 +89,9 @@ class Messenger {
     $.getJSON("/users", usrs => {
       usrs.map(contact => {
         if (!(contact in this.contacts)) {
-          this.contacts[contact] = new Conversation("Chat with " + contact, contact, "privmsg");
+          let conv_obj = new Conversation(contact, contact);
+          conv_obj.is_pm();
+          this.contacts[contact] = conv_obj;
         }
       });
     });
@@ -151,8 +191,13 @@ class Messenger {
   }
 
   _select_conv(conversation) {
+    if (this.selected_conversation) {
+      this.selected_conversation.selected = false;
+    }
     this.selected_conversation = conversation;
-    this.selected_conversation.unread = false;
+
+    this.selected_conversation.select();
+
     this.chatbox.load_messages(conversation.msgs);
     $("#curr_conv").text(conversation.title);
 
