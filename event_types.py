@@ -19,7 +19,7 @@ class Event(object):
 
     """
     def __init__(self, contents):
-        self.timestamp = time.time()
+        self.timestamp = time.strftime("%a, %d %b %Y - %I:%M %p", time.gmtime())
         self.contents = contents
 
     def jsonify(self):
