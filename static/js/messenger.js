@@ -27,7 +27,7 @@ class Conversation {
   render() {
     var icon_status = "readicon";
     if (this.unread) {
-      icon = "unread";
+      icon_status = "unread";
     }
 
     var attrib = "user-li";
