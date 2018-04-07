@@ -9,7 +9,7 @@ class Conversation {
   }
   is_pm() {
     this.callback_func = "messenger.select_pm";
-    this.icon = "fa fa-circle";
+    this.icon = "fa fa-user";
     this.type = "privmsg";
   }
 
@@ -49,6 +49,7 @@ class Messenger {
     this.selected_conversation = null;
     this.conversations = {};
     this.contacts = {};
+    this.get_whoami();
     this.get_conversations();
     this.get_active_contacts();
 
@@ -58,7 +59,6 @@ class Messenger {
     this.users_search = new UserSelectModal("#search-checklist", "#modal-list");
     this.chatbox = new ChatBox("#chat-history", "#chat-history-ul", "#message-to-send", "#send-button");
     this.chatbox.bind_events(this.send_message.bind(this));
-    this.get_whoami();
 
     this.run();
   }
@@ -89,12 +89,14 @@ class Messenger {
     $.getJSON("/users", usrs => {
       let new_contacts = {}
       usrs.map(contact => {
-        if (contact in this.contacts) {
-          new_contacts[contact] = this.contacts[contact];
-        } else {
-          let conv_obj = new Conversation(contact, contact);
-          conv_obj.is_pm();
-          new_contacts[contact] = conv_obj;
+        if (contact != this.whoami()) {
+          if (contact in this.contacts) {
+            new_contacts[contact] = this.contacts[contact];
+          } else {
+            let conv_obj = new Conversation(contact, contact);
+            conv_obj.is_pm();
+            new_contacts[contact] = conv_obj;
+          }
         }
       });
       this.contacts = new_contacts;
