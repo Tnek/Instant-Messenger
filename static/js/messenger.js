@@ -12,7 +12,7 @@ class Messenger {
     this.pm_bar = new SideBarList("#search-private", "#private-message-list");
 
     this.users_search = new UserSelectModal("#search-checklist", "#modal-list", this.render_users_search.bind(this));
-    this.chatbox = new ChatBox("#chat-history", "#chat-history-ul", "#message-to-send", "#send-button");
+    this.chatbox = new ChatBox("#chat-history", "#chat-history-ul", "#message-to-send", "#send-button", "#chat-about");
     this.chatbox.bind_events(this.send_message.bind(this));
   }
 
@@ -54,6 +54,7 @@ class Messenger {
         });
         this.contacts = new_contacts;
         this.render_pms();
+        this.render_users_search();
       });
     setTimeout(this.get_active_contacts.bind(this), 1000);
   }
@@ -87,9 +88,7 @@ class Messenger {
       this.selected_conversation.unselect();
     }
     this.selected_conversation = conversation;
-    this.chatbox.load_messages(conversation.msgs);
-
-    $("#curr_conv").text(conversation.title);
+    this.chatbox.load_conversation(this.selected_conversation);
   }
 
   tick() {
@@ -143,6 +142,10 @@ class Messenger {
         this.chatbox.add_message(msg);
       }
     } else {
+      /* 
+       * Refresh conversation to update timestamps when your own messages are 
+       * echoed back from the server 
+       */
       this.select_conv(this.selected_conversation);
     }
   }

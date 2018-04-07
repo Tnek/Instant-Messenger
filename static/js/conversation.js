@@ -14,7 +14,7 @@ class Conversation {
 
     this.ret_element = $(`<li class="clearfix ${attrib}">
             <div class="about name name-field">
-               <span class="${this.icon} ${icon_status}"></span> ${this.label}
+               <span class="${this.icon} ${icon_status}" /> ${this.label}
             </div> 
           </li>`)
 

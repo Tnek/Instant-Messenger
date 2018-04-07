@@ -1,9 +1,10 @@
 // ChatBox ====================================================
 class ChatBox {
-  constructor(chat_history, chat_history_list, send_box, send_button) {
+  constructor(chat_history, chat_history_list, send_box, send_button, curr_conv_label) {
     this.chat_history = chat_history; //chat history div
     this.chat_history_list = chat_history_list; //chat history ul
     this.send_box = send_box; 
+    this.curr_conv_label = curr_conv_label;
     this.send_button = send_button;
     this.whoami = "";
   }
@@ -62,6 +63,16 @@ class ChatBox {
   //jump to last message
   scrollToBottom() {
     $(this.chat_history).scrollTop($(this.chat_history)[0].scrollHeight);
+  }
+
+  load_conversation(conversation) {
+    this.load_messages(conversation.msgs);
+    $(this.curr_conv_label).empty();
+    $(this.curr_conv_label).append(`<div class="chat-with" id="curr_conv" name="curr_conv">${conversation.title}</div>`);
+    if (conversation.users) {
+        $(this.curr_conv_label).append('<span class="fa fa-user online"/>' + conversation.users.length + " - " + conversation.users.join(", "));
+
+    }
   }
 
 }
