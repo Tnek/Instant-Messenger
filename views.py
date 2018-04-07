@@ -70,7 +70,8 @@ def create_group(req, resp):
         title = req.form["title"]
         conv = appdata.new_conversation(title, participants + [user])
         resp.write("OK")
-    resp.forbidden()
+    else:
+        resp.forbidden()
     
 def fetch_events(req, resp):
     session = session_store.get_store(req)

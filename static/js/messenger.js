@@ -89,14 +89,12 @@ class Messenger {
     $.getJSON("/users", usrs => {
       let new_contacts = {}
       usrs.map(contact => {
-        if (contact != this.whoami()) {
-          if (contact in this.contacts) {
-            new_contacts[contact] = this.contacts[contact];
-          } else {
-            let conv_obj = new Conversation(contact, contact);
-            conv_obj.is_pm();
-            new_contacts[contact] = conv_obj;
-          }
+        if (contact in this.contacts) {
+          new_contacts[contact] = this.contacts[contact];
+        } else {
+          let conv_obj = new Conversation(contact, contact);
+          conv_obj.is_pm();
+          new_contacts[contact] = conv_obj;
         }
       });
       this.contacts = new_contacts;
