@@ -38,7 +38,7 @@ class Messenger(object):
     def __init__(self):
         self.users = {}
         self.conversations = {}
-        self.alphanum_filter = re.compile("^[A-Za-z0-9]+$")
+        self.alphanum_filter = re.compile("^[A-Za-z0-9 ]+$")
 
     def register(self, uname):
         if uname not in self.users and self.alphanum_filter.match(uname):

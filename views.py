@@ -68,7 +68,7 @@ def create_group(req, resp):
         participants = req.form["users"].split("&")
         participants.append(user)
         title = req.form["title"]
-        conv = appdata.new_conversation(title, participants)
+        conv = appdata.new_conversation(title, participants + [user])
         resp.write("OK")
     resp.forbidden()
     
