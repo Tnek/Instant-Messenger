@@ -56,7 +56,7 @@ class Messenger {
     this.conv_bar = new SideBarList("#search-group", "#group-message-list");
     this.pm_bar = new SideBarList("#search-private", "#private-message-list");
 
-    this.users_search = new UserSelectModal("#search-checklist", "#modal-list");
+    this.users_search = new UserSelectModal("#search-checklist", "#modal-list", this.render_users_search.bind(this));
     this.chatbox = new ChatBox("#chat-history", "#chat-history-ul", "#message-to-send", "#send-button");
     this.chatbox.bind_events(this.send_message.bind(this));
 
