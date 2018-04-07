@@ -181,7 +181,7 @@ body {
 
 /* ==========================================================
   online */
-.online, .me, .unread {
+.online, .me, .unread, .readicon {
   margin-right: 5px;
   font-size: 12px;
 }

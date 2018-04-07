@@ -30,7 +30,7 @@ class SideBarList extends SearchableItem {
 }
 
 function conv_barentry(item) {
-  var icon = "fa fa-comments";
+  var icon = "fa fa-comments readicon";
   if (item.unread) {
     icon = "fa fa-comments unread";
   }
@@ -45,7 +45,7 @@ function conv_barentry(item) {
 }
 
 function pm_barentry(item) {
-  var icon = "fa fa-circle";
+  var icon = "fa fa-circle readicon";
   if (item.unread) {
     icon = "fa fa-circle unread";
   }
