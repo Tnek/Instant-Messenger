@@ -261,6 +261,7 @@ a{
 
 .user-li-selected{
   background-color: #5b5f6b;
+  cursor: pointer;
 }
 
 #newChatModal {
