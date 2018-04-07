@@ -181,7 +181,7 @@ body {
 
 /* ==========================================================
   online */
-.online, .me {
+.online, .me, .unread {
   margin-right: 5px;
   font-size: 12px;
 }
@@ -189,6 +189,9 @@ body {
   color: #86BB71;
 }
 .me {
+  color: #94C2ED;
+}
+.unread {
   color: #94C2ED;
 }
 

@@ -107,11 +107,16 @@ class Messenger {
           ts: e.ts
         }
         this.conversations[e.event_obj.convo].msgs.push(msg);
+        if (e.event_obj.sender != this.whoami()) {
+          this.conversations[e.event_obj.convo].unread = true;
+          this.render_conversations();
+        }
 
         if (this.selected_conversation && e.event_obj.convo == 
                                             this.selected_conversation.title) {
           this.chatbox.add_message(msg);
-        }
+        } 
+
         break;
 
       case "conv_create":
@@ -131,11 +136,13 @@ class Messenger {
         let target_pm = e.event_obj.recipient;
         if (e.event_obj.recipient == this.whoami()) {
             target_pm = e.event_obj.sender;
+            this.contacts[target_pm].unread = true;
+            this.render_pms();
         }
 
         this.contacts[target_pm].msgs.push(pm)
 
-        if (this.selected_conversation && "Chat with " + target_pm == 
+        if (this.selected_conversation && this.contacts[target_pm].title == 
                                             this.selected_conversation.title) {
           this.chatbox.add_message(pm);
         }
@@ -145,6 +152,7 @@ class Messenger {
 
   _select_conv(conversation) {
     this.selected_conversation = conversation;
+    this.selected_conversation.unread = false;
     this.chatbox.load_messages(conversation.msgs);
     $("#curr_conv").text(conversation.title);
 
