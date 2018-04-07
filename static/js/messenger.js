@@ -60,7 +60,7 @@ class Messenger {
     this.chatbox.bind_events(this.send_message.bind(this));
     this.get_whoami();
 
-    this.tick();
+    this.run();
   }
 
   get_whoami() {
@@ -87,13 +87,18 @@ class Messenger {
 
   get_active_contacts() {
     $.getJSON("/users", usrs => {
+      let new_contacts = {}
       usrs.map(contact => {
-        if (!(contact in this.contacts)) {
+        if (contact in this.contacts) {
+          new_contacts[contact] = this.contacts[contact];
+        } else {
           let conv_obj = new Conversation(contact, contact);
           conv_obj.is_pm();
-          this.contacts[contact] = conv_obj;
+          new_contacts[contact] = conv_obj;
         }
       });
+      this.contacts = new_contacts;
+      this.render();
     });
     setTimeout(this.get_active_contacts.bind(this), 1000);
   }
@@ -232,12 +237,15 @@ class Messenger {
   }
 
 
+  run() {
+    this.render();
+    this.tick();
+  }
   tick() {
     $.getJSON("/events", events => {
       events.map(e => {
         this.handle_event(e);
       });
-      this.render();
     });
 
     setTimeout(this.tick.bind(this), 1000);
@@ -248,7 +256,7 @@ var messenger = new Messenger();
 
 // Onload ====================================================
 $(document).ready(function() {
-  messenger.tick();
+  messenger.run();
 });
 
 // Constant ====================================================
