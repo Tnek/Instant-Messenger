@@ -255,6 +255,9 @@ a{
   cursor: pointer;
   background-color: #5b5f6b;
 }
+.user-li:active{
+  background-color: #6b6f7b;
+}
 
 .user-li-selected{
   background-color: #5b5f6b;

@@ -104,7 +104,6 @@ class Messenger {
 
   render_pms() { this.pm_bar.render(this.contacts); } 
 
-
   render_users_search() { 
     this.users_search.render(Object.keys(this.contacts).filter(item => item != this.whoami())); 
   }
@@ -190,13 +189,25 @@ class Messenger {
     }
   }
 
-  _select_conv(conversation) {
-    if (this.selected_conversation) {
-      this.selected_conversation.selected = false;
-    }
-    this.selected_conversation = conversation;
 
+  re_render_conv_bar(conversation) {
+      if (conversation.type == "channel") {
+          this.render_conversations();
+      } else if (conversation.type == "privmsg") {
+          this.render_pms();
+      }
+  }
+  _select_conv(conversation) {
+    let old_conv = this.selected_conversation;
+
+    this.selected_conversation = conversation;
     this.selected_conversation.select();
+
+    if (old_conv) {
+        old_conv.selected = false;
+        this.re_render_conv_bar(old_conv);
+    }
+    this.re_render_conv_bar(this.selected_conversation);
 
     this.chatbox.load_messages(conversation.msgs);
     $("#curr_conv").text(conversation.title);
