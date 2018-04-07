@@ -1,6 +1,6 @@
 // ChatBox ====================================================
 class ChatBox {
-	constructor(chat_history, chat_history_list, send_box, send_button){
+  constructor(chat_history, chat_history_list, send_box, send_button) {
     this.chat_history = chat_history; //chat history div
     this.chat_history_list = chat_history_list; //chat history ul
     this.send_box = send_box; 
@@ -8,7 +8,7 @@ class ChatBox {
     this.whoami = "";
   }
 
-  bind_events(msg_callback){
+  bind_events(msg_callback) {
     this.msg_callback = msg_callback;
     //send message with send button
     $(this.send_button).on('click', this.send_msg.bind(this));
@@ -47,8 +47,8 @@ class ChatBox {
   //helper function to add individual messages
   _add_message(msg) {
     if (msg.sender == this.whoami) {
-        this._my_message(msg);
-        return;
+      this._my_message(msg);
+      return;
     }
     var templateResponse = Handlebars.compile( $("#message-response-template").html());
     $(this.chat_history_list).append(templateResponse(msg));
