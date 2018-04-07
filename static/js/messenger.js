@@ -99,7 +99,7 @@ class Messenger {
       });
     });
 
-    setTimeout(this.tick.bind(this), 1000);
+    setTimeout(this.tick.bind(this), 500);
   }
 
   handle_event(e) {
@@ -142,6 +142,8 @@ class Messenger {
       if (this.selected_conversation && relevant_conv === this.selected_conversation) { 
         this.chatbox.add_message(msg);
       }
+    } else {
+      this.select_conv(this.selected_conversation);
     }
   }
 }
