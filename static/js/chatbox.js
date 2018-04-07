@@ -46,13 +46,17 @@ class ChatBox {
 
   //helper function to add individual messages
   _add_message(msg) {
-    if (msg.sender == this.whoami) { //self
-      var template = Handlebars.compile( $("#message-template").html());
-      $(this.chat_history_list).append(template(msg));
-    } else { //other
-      var templateResponse = Handlebars.compile( $("#message-response-template").html());
-      $(this.chat_history_list).append(templateResponse(msg));
+    if (msg.sender == this.whoami) {
+        this._my_message(msg);
+        return;
     }
+    var templateResponse = Handlebars.compile( $("#message-response-template").html());
+    $(this.chat_history_list).append(templateResponse(msg));
+  }
+
+  _my_message(msg) {
+    var template = Handlebars.compile( $("#message-template").html());
+    $(this.chat_history_list).append(template(msg));
   }
 
   //jump to last message

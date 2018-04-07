@@ -119,21 +119,25 @@ class Messenger {
 
   send_message(content) {
     if (this.selected_conversation) {
+      var message;
       if (this.selected_conversation.type == "channel") {
-        let message = {
+        message = {
           contents:content,
           conv:this.selected_conversation.title
         }
     
         $.post("/msg", message)
+
       } else if (this.selected_conversation.type == "privmsg") {
-        let message = {
+        message = {
           recipient:this.selected_conversation.users,
           contents:content
         }
-
         $.post("/priv_msg", message);
       }
+
+      message.sender = this.whoami();
+      this.chatbox.add_message(message);
     }
   }
 
@@ -149,18 +153,20 @@ class Messenger {
         if (e.event_obj.sender != this.whoami()) {
           this.conversations[e.event_obj.convo].unread = true;
           this.render_conversations();
-        }
 
-        if (this.selected_conversation && e.event_obj.convo == 
-                                            this.selected_conversation.title) {
-          this.chatbox.add_message(msg);
-        } 
+          if (this.selected_conversation && e.event_obj.convo == 
+                                              this.selected_conversation.title) {
+            this.chatbox.add_message(msg);
+          } 
+        }
 
         break;
 
       case "conv_create":
         let conv = e.event_obj;
-        this.conversations[conv.title] = new Conversation(conv.title, conv.usrs, "channel");
+        this.conversations[conv.title] = new Conversation(conv.title, conv.usrs);
+        this.conversations[conv.title].unread = true; 
+
         this.render_conversations();
         break;
 
@@ -177,14 +183,14 @@ class Messenger {
             target_pm = e.event_obj.sender;
             this.contacts[target_pm].unread = true;
             this.render_pms();
+            if (this.selected_conversation && this.contacts[target_pm].title == 
+                                                this.selected_conversation.title) {
+              this.chatbox.add_message(pm);
+            }
         }
 
         this.contacts[target_pm].msgs.push(pm)
 
-        if (this.selected_conversation && this.contacts[target_pm].title == 
-                                            this.selected_conversation.title) {
-          this.chatbox.add_message(pm);
-        }
         break;
     }
   }
