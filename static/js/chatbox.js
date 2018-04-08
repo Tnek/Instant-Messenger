@@ -130,5 +130,4 @@ class ChatBox {
     this.render_top_panel();
     this.load_messages(this.selected_conv.msgs);
   }
-
 }

@@ -31,7 +31,7 @@ class User(object):
 
     def get_events(self):
         self.event_lock.acquire()
-        to_ret = self.unread_queue
+        to_ret = [i for i in self.unread_queue]
         self.unread_queue = []
         self.event_lock.release()
         return to_ret
