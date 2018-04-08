@@ -116,11 +116,13 @@ class Messenger {
         this.conversations[conv.title].unread += 1; 
 
         this.render_conversations();
+        this.conversations[conv.title].add_msg(e);
         return;
 
       case "conv_leave":
         this.conversations[e.event_obj.convo].remove_user(e.event_obj.sender);
         this.chatbox.render_top_panel();
+        this.conversations[e.event_obj.convo].add_msg(e);
         return;
 
       case "privmsg":

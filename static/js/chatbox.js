@@ -47,10 +47,10 @@ class ChatBox {
     this.scrollToBottom();
   }
 
-  //helper function to add individual messages
+  //helper function to add individual messages based on message type
   _add_message(msg) {
     var rendered_msg;
-    var system_message = {};
+    var system_message;
 
     switch (msg.type) {
       case "privmsg":
@@ -87,8 +87,10 @@ class ChatBox {
     }
   }
 
+  //Handlebar template compilations----------
+
   _system_message(system_message) {
-    return Handlebars.compile( $("#system_message-template").html())(system_message);
+    return Handlebars.compile( $("#system-message-template").html())(system_message);
   }
 
   _user_message(msg) {
@@ -98,14 +100,21 @@ class ChatBox {
     return Handlebars.compile( $("#message-template").html())(msg);
   }
 
+  //----------------------------------------
+
   //jump to last message
   scrollToBottom() {
     $(this.chat_history).scrollTop($(this.chat_history)[0].scrollHeight);
   }
 
+  //render group name and participants
   render_top_panel() {
     $(this.curr_conv_label).empty();
-    $(this.curr_conv_label).append(`<div class="chat-with" id="curr_conv" name="curr_conv">${this.selected_conv.title}</div>`);
+    $(this.curr_conv_label).append(`
+      <div class="chat-with" id="curr_conv" name="curr_conv">
+        ${this.selected_conv.title}
+      </div>
+    `);
     if (this.selected_conv.users) {
       $(this.curr_conv_label).append(`
         <div>
@@ -115,6 +124,7 @@ class ChatBox {
       `);
     }
   }
+
   load_conversation(conversation) {
     this.selected_conv = conversation;
     this.render_top_panel();

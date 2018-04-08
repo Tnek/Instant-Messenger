@@ -271,15 +271,16 @@ a{
 
 #open_my_channel_modal{
   font-size: large;
-  margin-left: 95px;
   cursor: pointer;
 }
 
 #open_global_channel_modal:hover{
-  background-color: #5b5f6b;
   cursor: pointer;
 }
 
+.modal_name{
+  padding-right: 95px;
+}
 
 .modal-body input{
   border: solid 1px gray;
@@ -293,6 +294,13 @@ a{
 .formHeader {
   margin-top: 10px;
   font-size: 16px;
+}
+
+.message-list{
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 420px;
+  width: 190px;
 }
 
 /* The switch - the box around the slider */
