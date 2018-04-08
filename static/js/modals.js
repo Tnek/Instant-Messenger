@@ -42,7 +42,7 @@ class CreateGroupModal extends Modal {
     constructor(target, parent_div, refresh_function) {
       super(target, parent_div, "Create Channel");
       this.search_list = new SelectableList(this.target_sel+'-search', this.target_sel+'-list', refresh_function);
-      this.titleform = this.target+'-title';
+      this.titleform = this.target_sel+'-title';
 
 
       this.close_callbacks.push(this.clear_forms.bind(this));
@@ -54,13 +54,12 @@ class CreateGroupModal extends Modal {
     }
     build_body() {
       this.add_to_body(`<div class="form-group">
-                  <label class="formHeader" for=${this.titleform}>Channel Name</label>
-                  <input class="form-control" id=${this.titleform} type="text" autocomplete=off placeholder="Enter title"></input>
+                  <label class="formHeader" for=${this.target + "-title"}>Channel Name</label>
+                  <input class="form-control" id=${this.target + "-title"} type="text" autocomplete=off placeholder="Enter title"></input>
                 </div>`)
 
       this.add_to_body(this.search_list.build());
     }
-
 
     make_group() {
       if ($(this.titleform).val()) {
@@ -68,14 +67,15 @@ class CreateGroupModal extends Modal {
           title: $(this.titleform).val(),
           users: Object.keys(this.search_list.selected_items).join("&"),
           is_public: false
-        }).done(function() {
-          $(this.target).modal('hide');
-          this.clear_forms();
-        }.bind(this));
+        });
+        $(this.target_sel).modal('hide');
+        this.clear_forms();
       }
     }
 
     clear_forms() {
+        console.log("clear");
+      $(this.titleform).val('');
       this.search_list.clear_selected();
     }
 }
