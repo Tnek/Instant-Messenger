@@ -36,7 +36,10 @@ class User(object):
 class Messenger(object):
     def __init__(self):
         self.users = {}
+
+        self.conversations_lock = Lock()
         self.conversations = {}
+        self.public_conversations = {}
         self.alphanum_filter = re.compile("^[A-Za-z0-9 ]+$")
 
     def register(self, uname):
@@ -58,7 +61,7 @@ class Messenger(object):
             del self.users[uname]
             del u_obj
 
-    def new_conversation(self, title, users):
+    def new_conversation(self, title, users, public=False):
         """
             Creates a new conversation object.
 
@@ -71,7 +74,11 @@ class Messenger(object):
             return
 
         conv = Conversation(title)
+        self.conversations_lock.acquire()
         self.conversations[title] = conv
+        if public:
+            self.public_conversations[title] = conv
+        self.conversations_lock.release()
 
         for u in users:
             conv.add_user(self.users[u])
@@ -122,6 +129,14 @@ class Messenger(object):
 
         return False
 
+    def delete_conv(self, conv_title):
+        self.conversations_lock.acquire()
+        if conv_title in self.conversations:
+            del self.conversations[conv_title]
+        if conv_title in self.public_conversations:
+            del self.public_conversations[conv_title]
+        self.conversations_lock.release()
+
     def conv_leave(self, uname, conv_title):
         """
             Removes user from conversation. This is a wrapper around 
@@ -134,6 +149,11 @@ class Messenger(object):
         if conv_title in self.conversations and uname in self.users:
             u_obj = self.users[uname]
             conv_obj = self.conversations[conv_title]
+
+            # Free up empty conversations
+            if len(conv_obj.participants) == 1:
+                self.delete_conv(conv_title)
+
             return conv_obj.user_leave(u_obj)
         return False
 

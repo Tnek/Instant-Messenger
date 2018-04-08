@@ -1,5 +1,6 @@
 import time
 import json
+from threading import Lock
 
 class Event(object):
     """ 
@@ -84,13 +85,16 @@ class ConversationLeave(object):
 
 class Conversation(object):
     def __init__(self, title):
+        self.participants_lock = Lock()
         self.participants = set()
         self.public = False
         self.title = title
 
     def add_user(self, user):
+        self.participants_lock.acquire()
         self.participants.add(user)
         user.conversations.add(self)
+        self.participants_lock.release()
 
     def jsonify(self):
         return {"title": self.title,
@@ -100,13 +104,17 @@ class Conversation(object):
         return "conv_create"
 
     def user_leave(self, user):
+        self.participants_lock.acquire()
         if user in self.participants:
             self.participants.remove(user)
             conv_leave = ConversationLeave(user.uname, self.title)
 
             for u in self.participants:
                 u.add_event(Event(conv_leave))
+            self.participants_lock.release()
             return True
+
+        self.participants_lock.release()
         return False
 
     def __repr__(self):
