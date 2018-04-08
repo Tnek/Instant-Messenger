@@ -11,8 +11,8 @@ class Messenger {
     this.conv_bar = new SideBarList("#search-group", "#group-message-list");
     this.pm_bar = new SideBarList("#search-private", "#private-message-list");
 
-//    this.users_search = new UserSelectModal("#groupsModal", "#search-checklist", "#modal-list", this.render_users_search.bind(this));
     this.create_group_modal = new CreateGroupModal("newChatModal", "#people-list", this.render_users_search.bind(this))    
+    this.public_conversations_modal = new PublicConversationModal("publicModal", "body");
     this.chatbox = new ChatBox("#chat-history", "#chat-history-ul", "#message-to-send", "#send-button", "#chat-about");
     this.chatbox.bind_events(this.send_message.bind(this));
   }

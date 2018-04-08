@@ -7,7 +7,7 @@ class Modal {
 
     this.close_callbacks = [];
     this.submit_callbacks = [];
-    this.build();
+    this.bind_dom();
   }
   onClose(callback) {
     this.close_callbacks.append(callback);
@@ -15,8 +15,10 @@ class Modal {
   onSubmit(callback) {
     this.submit_callbacks.append(callback);
   }
-  build() {
-    $(this.parent_div).append(Handlebars.compile( $("#modal-template").html())(this));
+
+  bind_dom() {
+    this.dom_element = Handlebars.compile( $("#modal-template").html())(this);
+    $(this.parent_div).append(this.dom_element);
   }
 
   add_to_body(item) {
@@ -82,8 +84,8 @@ class CreateGroupModal extends Modal {
 
       this.build_body();
       this.build_footer("Create");
-
     }
+
     build_body() {
       this.public_toggle.get_dom_elements().map(e => this.add_to_body(e));
       this.add_to_body(`<div class="form-group">
@@ -99,7 +101,7 @@ class CreateGroupModal extends Modal {
         $.post("/newgroup", {
           title: $(this.titleform).val(),
           users: Object.keys(this.search_list.selected_items).join("&"),
-          is_public: false
+          is_public: this.public_toggle.get_value()
         });
         $(this.target_sel).modal('hide');
         this.clear_forms();
@@ -113,4 +115,17 @@ class CreateGroupModal extends Modal {
     }
 }
 
+class PublicConversationModal extends Modal {
+  constructor(target, parent_div) {
+    super(target, parent_div, "Join Public Channel");
+    this.search_list = new SelectableList(this.target_sel+'-search', this.target_sel+'-list', this.render.bind(this));
+
+//    this.dom_element.on('shown', this.render.bind(this));
+  }
+  render() {
+/*    $.getJSON("/public_conversations", convs => {
+        this.search_list.render(convs);
+    });*/
+  }
+}
 
