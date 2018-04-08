@@ -71,17 +71,23 @@ class PrivateMessage(object):
     def __repr__(self):
         return "%s -> %s: %s" %(self.sender, self.recipient, self.contents)
 
-class ConversationLeave(object):
-    """ Message representing user leaving a conversation """
+class ConversationMessage(object):
+    """ Represents system events for user's actions inside a conversation """
     def __init__(self, sender, convo):
         self.convo = convo
         self.sender = sender
 
-    def get_type(self):
-        return "conv_leave"
     def jsonify(self):
         return {"sender": self.sender,
                 "convo": self.convo}
+
+class ConversationLeave(ConversationMessage):
+    def get_type(self):
+        return "conv_leave"
+
+class ConversationJoin(object):
+    def get_type(self):
+        return "conv_join"
 
 class Conversation(object):
     def __init__(self, title):
@@ -102,6 +108,12 @@ class Conversation(object):
 
     def get_type(self):
         return "conv_create"
+
+    def user_add(self, user):
+        for user in self.participants:
+            user.add_event(Event(ConversationJoin(user.uname, self.title)))
+        self.participants.add(user)
+        user.add_event(Event(self))
 
     def user_leave(self, user):
         self.participants_lock.acquire()

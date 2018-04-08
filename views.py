@@ -67,8 +67,9 @@ def create_group(req, resp):
         user = session["username"]
         participants = req.form["users"].split("&")
         participants.append(user)
+        public = req.form["is_public"] == "true"
         title = req.form["title"]
-        conv = appdata.new_conversation(title, participants + [user])
+        conv = appdata.new_conversation(title, participants + [user], public)
         resp.write("OK")
     else:
         resp.forbidden()
@@ -137,14 +138,39 @@ def whoami(req, resp):
     else:
         resp.forbidden()
 
+def public_conversations(req, resp):
+    session = session_store.get_store(req)
+    if not "username" in session:
+        resp.forbidden()
+        return
+    
+    resp.headers["Content-Type"] = "application/json"
+    resp.write(serialize_list(appdata.public_conversations.values()))
+
+def join_group(req, resp):
+    session = session_store.get_store(req)
+    if not "username" in session:
+        resp.forbidden()
+        return
+    if req.method == "POST":
+        user = session["username"]
+        conv = req.form["conv"]
+
+        appdata.public_conversations[conv].user_add(user)
+    else:
+        resp.forbidden()
+
+
 serv.handle("/", index, methods=["GET", "POST"])
 serv.handle("/messenger", messenger, methods=["GET", "POST"])
 serv.handle("/conversations", conversations)
+serv.handle("/public_conversations", public_conversations)
 serv.handle("/events", fetch_events)
 serv.handle("/users", get_users)
 serv.handle("/logout", logout)
 serv.handle("/whoami", whoami)
 
+serv.handle("/join", join_group, methods=["POST"])
 serv.handle("/newgroup", create_group, methods=["POST"])
 serv.handle("/leave_group", leave_group, methods=["POST"])
 serv.handle("/msg", msg, methods=["POST"])
