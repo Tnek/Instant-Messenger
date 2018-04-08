@@ -53,7 +53,7 @@ class Messenger(object):
         if uname in self.users:
             u_obj = self.users[uname]
             for conv in u_obj.conversations:
-                conv.leave(u_obj)
+                conv.user_leave(u_obj)
 
             del self.users[uname]
             del u_obj

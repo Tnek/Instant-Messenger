@@ -61,6 +61,9 @@ class Channel extends Conversation {
     $.post("/msg", msg);
     return msg;
   }
+  remove_user(uname) {
+    this.users.splice(this.users.indexOf(uname), 1);
+  }
 }
 
 class PrivateMessages extends Conversation {

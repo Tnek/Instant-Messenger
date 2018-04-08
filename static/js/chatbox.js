@@ -4,6 +4,8 @@ class ChatBox {
     this.chat_history = chat_history; //chat history div
     this.chat_history_list = chat_history_list; //chat history ul
     this.send_box = send_box; 
+    this.selected_conv = null;
+
     this.curr_conv_label = curr_conv_label;
     this.send_button = send_button;
     this.whoami = "";
@@ -45,10 +47,6 @@ class ChatBox {
     this.scrollToBottom();
   }
 
-  _system_message(msg) {
-
-  }
-
   //helper function to add individual messages
   _add_message(msg) {
     var rendered_msg;
@@ -61,8 +59,8 @@ class ChatBox {
             rendered_msg = this._user_message(msg);
         }
         break;
-      case "conv_create":
       case "conv_leave":
+      case "conv_create":
         rendered_msg = this._system_message(msg);
         break;
 
@@ -74,6 +72,10 @@ class ChatBox {
     if (rendered_msg) {
       $(this.chat_history_list).append(rendered_msg);
     }
+  }
+
+  _system_message(msg) {
+    
   }
 
   _user_message(msg) {
@@ -88,14 +90,17 @@ class ChatBox {
     $(this.chat_history).scrollTop($(this.chat_history)[0].scrollHeight);
   }
 
-  load_conversation(conversation) {
-    this.load_messages(conversation.msgs);
+  render_top_panel() {
     $(this.curr_conv_label).empty();
-    $(this.curr_conv_label).append(`<div class="chat-with" id="curr_conv" name="curr_conv">${conversation.title}</div>`);
-    if (conversation.users) {
-        $(this.curr_conv_label).append('<span class="fa fa-user online"/>' + conversation.users.length + " - " + conversation.users.join(", "));
-
+    $(this.curr_conv_label).append(`<div class="chat-with" id="curr_conv" name="curr_conv">${this.selected_conv.title}</div>`);
+    if (this.selected_conv.users) {
+      $(this.curr_conv_label).append('<span class="fa fa-user online"/>' + this.selected_conv.users.length + " - " + this.selected_conv.users.join(", "));
     }
+  }
+  load_conversation(conversation) {
+    this.selected_conv = conversation;
+    this.render_top_panel();
+    this.load_messages(this.selected_conv.msgs);
   }
 
 }

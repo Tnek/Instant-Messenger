@@ -107,7 +107,6 @@ class Messenger {
   }
 
   handle_event(e) {
-    console.log(e)
     var relevant_conv;
     switch (e.type) {
       case "conv_create":
@@ -119,7 +118,8 @@ class Messenger {
         return;
 
       case "conv_leave":
-
+        this.conversations[e.event_obj.convo].remove_user(e.event_obj.sender);
+        this.chatbox.render_top_panel();
         return;
 
       case "privmsg":
