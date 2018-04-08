@@ -154,9 +154,11 @@ def join_group(req, resp):
         return
     if req.method == "POST":
         user = session["username"]
-        conv = req.form["conv"]
-
-        appdata.public_conversations[conv].user_add(user)
+        convs = req.form["conv"].split("&")
+        print(convs)
+        for conv in convs:
+            if conv in appdata.public_conversations:
+                appdata.public_conversations[conv].add_user(appdata.users[user])
     else:
         resp.forbidden()
 

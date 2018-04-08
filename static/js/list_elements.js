@@ -38,15 +38,18 @@ class SelectableList extends SearchableItem {
   filter_function(query, items) {
     return items.filter(item => item.toLowerCase().indexOf(query) > -1);
   }
-  build() {
+  build(label) {
       let build_input = this.input.slice(1);
       let build_target = this.target.slice(1);
-      return `<div class="form-group">
-                <label class="formHeader" for="${build_input}">Send invites to: </label>
+      let output = $(`<div class="form-group">
+                <label class="formHeader" for="${build_input}">${label} </label>
                 <input id="${build_input}" type="text" placeholder="Search by name" autocomplete="off"/>
                 <i class="fa fa-search"></i>
               </div>
-              <div class="list-group list-group-flush modal-list" id="${build_target}"></div>`
+              <div class="list-group list-group-flush modal-list" id="${build_target}"></div>`)
+      output.find("input").on("keyup", this.refresh_function);
+      return output;
+
   }
 
   render_function(visible_items) {

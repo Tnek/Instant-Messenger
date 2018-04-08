@@ -85,7 +85,7 @@ class ConversationLeave(ConversationMessage):
     def get_type(self):
         return "conv_leave"
 
-class ConversationJoin(object):
+class ConversationJoin(ConversationMessage):
     def get_type(self):
         return "conv_join"
 
@@ -98,8 +98,12 @@ class Conversation(object):
 
     def add_user(self, user):
         self.participants_lock.acquire()
+        for u in self.participants:
+            u.add_event(Event(ConversationJoin(user.uname, self.title)))
         self.participants.add(user)
-        user.conversations.add(self)
+        user.add_conv(self)
+        user.add_event(Event(self))
+
         self.participants_lock.release()
 
     def jsonify(self):
@@ -108,12 +112,6 @@ class Conversation(object):
 
     def get_type(self):
         return "conv_create"
-
-    def user_add(self, user):
-        for user in self.participants:
-            user.add_event(Event(ConversationJoin(user.uname, self.title)))
-        self.participants.add(user)
-        user.add_event(Event(self))
 
     def user_leave(self, user):
         self.participants_lock.acquire()

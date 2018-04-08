@@ -13,8 +13,14 @@ class User(object):
         self.unread_queue = []
         self.event_lock = Lock()
 
+        self.conv_lock = Lock()
         self.conversations = set()
+
         self.pms = {}
+    def add_conv(self, conv):
+        self.conv_lock.acquire()
+        self.conversations.add(conv)
+        self.conv_lock.release()
 
     def add_event(self, e):
         """ Adds an Event (see :class Event:`event_types.py`) to the user's message 
@@ -81,8 +87,9 @@ class Messenger(object):
         self.conversations_lock.release()
 
         for u in users:
-            conv.add_user(self.users[u])
-            self.users[u].add_event(Event(conv))
+            if u in self.users:
+                conv.add_user(self.users[u])
+                self.users[u].add_event(Event(conv))
             
         return conv
 
