@@ -14,4 +14,3 @@ class UserSelectModal extends SelectableList {
     this.clear_selected();
   }
 }
-

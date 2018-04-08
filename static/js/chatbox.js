@@ -50,6 +50,7 @@ class ChatBox {
   //helper function to add individual messages
   _add_message(msg) {
     var rendered_msg;
+    var system_message;
     switch (msg.type) {
       case "privmsg":
       case "msg":
@@ -59,9 +60,20 @@ class ChatBox {
             rendered_msg = this._user_message(msg);
         }
         break;
+        
       case "conv_leave":
+        system_message = {contents = "${msg.sender} has left the conversation."};
+        rendered_msg = this._conv_create(msg);
+        break;
+
+      case "conv_join":
+        system_message = {contents = "${msg.sender} has joined the conversation."};
+        rendered_msg = this._conv_create(msg);
+        break;
+
       case "conv_create":
-        rendered_msg = this._system_message(msg);
+        system_message = {contents = "A conversation has been created."};
+        rendered_msg = this._conv_create(msg);
         break;
 
       default:
@@ -74,8 +86,8 @@ class ChatBox {
     }
   }
 
-  _system_message(msg) {
-    
+  _conv_create(system_message) {
+    return Handlebars.compile( $("#system_message-template").html())(system_message);
   }
 
   _user_message(msg) {
