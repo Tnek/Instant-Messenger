@@ -44,27 +44,43 @@ class ChatBox {
     this._add_message(msg);
     this.scrollToBottom();
   }
-  system_message(msg) {
+
+  _system_message(msg) {
 
   }
 
   //helper function to add individual messages
   _add_message(msg) {
-    if (msg.type == "system") {
-      this.system_message(msg);
-      return;
+    var rendered_msg;
+    switch (msg.type) {
+      case "privmsg":
+      case "msg":
+        if (msg.sender === this.whoami) {
+            rendered_msg = this._my_message(msg);
+        } else { 
+            rendered_msg = this._user_message(msg);
+        }
+        break;
+      case "conv_create":
+      case "conv_leave":
+        rendered_msg = this._system_message(msg);
+        break;
+
+      default:
+        rendered_msg = null;
+        break;
     }
-    if (msg.sender == this.whoami) {
-      this._my_message(msg);
-      return;
+
+    if (rendered_msg) {
+      $(this.chat_history_list).append(rendered_msg);
     }
-    var templateResponse = Handlebars.compile( $("#message-response-template").html());
-    $(this.chat_history_list).append(templateResponse(msg));
   }
 
+  _user_message(msg) {
+    return Handlebars.compile( $("#message-response-template").html())(msg);
+  }
   _my_message(msg) {
-    var template = Handlebars.compile( $("#message-template").html());
-    $(this.chat_history_list).append(template(msg));
+    return Handlebars.compile( $("#message-template").html())(msg);
   }
 
   //jump to last message

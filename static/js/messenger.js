@@ -93,7 +93,7 @@ class Messenger {
     this.chatbox.load_conversation(this.selected_conversation);
 
     this.render_conversations();
-    this.render_pm();
+    this.render_pms();
   }
 
   tick() {
@@ -119,7 +119,8 @@ class Messenger {
         return;
 
       case "conv_leave":
-        break;
+
+        return;
 
       case "privmsg":
         let target = e.event_obj.recipient == this.whoami() ? 
@@ -133,15 +134,13 @@ class Messenger {
         return
     }
 
-    let msg = {
-      contents: e.event_obj.contents,
-      sender: e.event_obj.sender,
-      ts: e.ts
-    }
+    let msg = e.event_obj;
+    msg.ts = e.ts;
+    msg.type = e.type;
 
     relevant_conv.add_msg(msg);
 
-    if (e.event_obj.sender != this.whoami()) {
+    if (msg.sender != this.whoami()) {
       relevant_conv.unread += 1;
       this.render_conversations();
       this.render_pms();
