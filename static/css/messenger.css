@@ -200,7 +200,7 @@ body {
   list-group */
 
 .list-group{
-  width: 420px;
+  width: 410px;
 }
 .list-group-item {
   user-select: none; /* Standard */
@@ -282,6 +282,10 @@ a{
   padding-right: 95px;
 }
 
+.modal-body{
+  padding: 1rem 0rem 1rem 2.5rem;
+}
+
 .modal-body input{
   border: solid 1px gray;
 }
@@ -294,6 +298,10 @@ a{
 .formHeader {
   margin-top: 10px;
   font-size: 16px;
+}
+
+.form-group {
+  margin-top: 1rem;
 }
 
 .message-list{
@@ -309,6 +317,8 @@ a{
   display: inline-block;
   width: 60px;
   height: 34px;
+  float: right;
+  margin-right: 50px;
 }
 
 /* Hide default HTML checkbox */
@@ -363,4 +373,6 @@ input:checked + .slider:before {
 }
 
 .conv_label {
+  font-size: 25px;
+  line-height: normal;
 }

@@ -43,8 +43,10 @@ class ToggleButton {
   constructor(on_text, off_text) { 
     this.on_text = on_text;
     this.off_text = off_text;
+
+    this.label = $('<span class="conv_label"/>');
+    this.label.text(this.on_text);
     this.button = $(`<label class="switch"> <input id="toggle-button" type="checkbox" checked="checked"/> <span class="slider round"></span></label>`);
-    this.label = $('<span class="conv_label"/>').text(this.on_text);
 
     this.value = true;
 
@@ -56,7 +58,7 @@ class ToggleButton {
   }
 
   get_dom_elements() {
-    return [this.button, this.label];
+    return [this.label, this.button];
   }
 
   toggle() {
@@ -114,24 +116,23 @@ class CreateGroupModal extends Modal {
 }
 
 class PublicConversationModal extends Modal {
-  constructor(target, parent_div, open_element) {
+  constructor(target, parent_div) {
     super(target, parent_div, "Join Public Channel");
     this.search_list = new SelectableList(this.target_sel+'-search', this.target_sel+'-list', this.render.bind(this));
-    $(open_element).click(this.render.bind(this));
+    $(this.target_sel).on('shown', this.render.bind(this));
 
     this.build_body();
     this.build_footer("Join");
     this.render();
     this.submit_callbacks.push(this.join_groups.bind(this));
-    this.close_callbacks.push(this.clear_forms.bind(this));        
   }
 
   join_groups() {
     $.post("/join", {
       conv: Object.keys(this.search_list.selected_items).join("&")
     });
-    this.clear_forms();
     $(this.target_sel).modal('hide');
+    this.clear_forms();
   }
 
   build_body() {
@@ -145,7 +146,6 @@ class PublicConversationModal extends Modal {
   }
   clear_forms() {
     this.search_list.clear_selected();
-    $(this.target_sel+'-body').empty();
-    this.build_body();
   }
 }
+
