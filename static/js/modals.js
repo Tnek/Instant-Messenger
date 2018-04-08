@@ -38,12 +38,44 @@ class Modal {
   }
 }
 
+class ToggleButton {
+  constructor(on_text, off_text) { 
+    this.on_text = on_text;
+    this.off_text = off_text;
+    this.button = $(`<label class="switch"> <input id="toggle-button" type="checkbox" checked="checked"/> <span class="slider round"></span></label>`);
+    this.label = $('<span class="conv_label"/>').text(this.on_text);
+
+    this.value = true;
+
+    this.button.find('input').click(this.toggle.bind(this));
+  }
+
+  get_value() {
+      return this.value;
+  }
+
+  get_dom_elements() {
+    return [this.button, this.label];
+  }
+
+  toggle() {
+    this.value = !this.value;
+    if (this.get_value() === true) {
+      this.label.text(this.on_text);
+    } else {
+      this.label.text(this.off_text);
+    }
+  }
+}
+
+
 class CreateGroupModal extends Modal {
     constructor(target, parent_div, refresh_function) {
       super(target, parent_div, "Create Channel");
       this.search_list = new SelectableList(this.target_sel+'-search', this.target_sel+'-list', refresh_function);
       this.titleform = this.target_sel+'-title';
 
+      this.public_toggle = new ToggleButton("Create Public Conversation", "Create Private Conversation");
 
       this.close_callbacks.push(this.clear_forms.bind(this));
       this.submit_callbacks.push(this.make_group.bind(this));
@@ -53,6 +85,7 @@ class CreateGroupModal extends Modal {
 
     }
     build_body() {
+      this.public_toggle.get_dom_elements().map(e => this.add_to_body(e));
       this.add_to_body(`<div class="form-group">
                   <label class="formHeader" for=${this.target + "-title"}>Channel Name</label>
                   <input class="form-control" id=${this.target + "-title"} type="text" autocomplete=off placeholder="Enter title"></input>
@@ -80,21 +113,4 @@ class CreateGroupModal extends Modal {
     }
 }
 
-/*
-class UserSelectModal extends SelectableList {
-  constructor(input, target, refresh_function) {
-    super(input, target, refresh_function);
-  }
 
-  make_group() {
-    if ($("#titleForm")) {
-      $.post("/newgroup", {
-        title: $("#titleForm").val(),
-        users: Object.keys(this.selected_items).join("&")
-      });
-      $('#newChatModal').modal('hide');
-    }
-    this.clear_selected();
-  }
-}
-*/
