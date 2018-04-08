@@ -1,1 +1,5 @@
-Source code for the client
+-To start, run $python app.py
+
+
+
+

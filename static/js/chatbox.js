@@ -50,7 +50,8 @@ class ChatBox {
   //helper function to add individual messages
   _add_message(msg) {
     var rendered_msg;
-    var system_message;
+    var system_message = {};
+
     switch (msg.type) {
       case "privmsg":
       case "msg":
@@ -60,20 +61,20 @@ class ChatBox {
             rendered_msg = this._user_message(msg);
         }
         break;
-        
+
       case "conv_leave":
-        system_message = {contents = "${msg.sender} has left the conversation."};
-        rendered_msg = this._conv_create(msg);
+        system_message = {contents: msg.sender + "has left the conversation."};
+        rendered_msg = this._system_message(system_message);
         break;
 
       case "conv_join":
-        system_message = {contents = "${msg.sender} has joined the conversation."};
-        rendered_msg = this._conv_create(msg);
+        system_message = {contents: msg.sender + "has joined the conversation."};
+        rendered_msg = this._system_message(system_message);
         break;
 
       case "conv_create":
-        system_message = {contents = "A conversation has been created."};
-        rendered_msg = this._conv_create(msg);
+        system_message = {contents: "A conversation has been created."};
+        rendered_msg = this._system_message(system_message);
         break;
 
       default:
@@ -86,7 +87,7 @@ class ChatBox {
     }
   }
 
-  _conv_create(system_message) {
+  _system_message(system_message) {
     return Handlebars.compile( $("#system_message-template").html())(system_message);
   }
 
@@ -106,7 +107,12 @@ class ChatBox {
     $(this.curr_conv_label).empty();
     $(this.curr_conv_label).append(`<div class="chat-with" id="curr_conv" name="curr_conv">${this.selected_conv.title}</div>`);
     if (this.selected_conv.users) {
-      $(this.curr_conv_label).append('<span class="fa fa-user online"/>' + this.selected_conv.users.length + " - " + this.selected_conv.users.join(", "));
+      $(this.curr_conv_label).append(`
+        <div>
+          <span class="fa fa-user online"/>
+          ${this.selected_conv.users.length} - ${this.selected_conv.users.join(", ")}
+        </div>
+      `);
     }
   }
   load_conversation(conversation) {
@@ -116,21 +122,3 @@ class ChatBox {
   }
 
 }
-
-//var chatBox = new ChatBox("#chat-history", "#chat-history-ul", "#message-to-send", "#send-button");
-
-/*
-// Onload ====================================================
-(function(){
-  chatBox.load_messages(dummy_conv);
-})();
-
-function dummy_callback(msg) {
-  var message = {"sender":"Alice", 
-    "contents":msg, "ts":"12:01 AM"};
-  dummy_conv.push(message);
-  chatBox.add_message(message);
-}
-
-chatBox.bind_events(dummy_callback);
-*/
