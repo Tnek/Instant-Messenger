@@ -70,6 +70,18 @@ class PrivateMessage(object):
     def __repr__(self):
         return "%s -> %s: %s" %(self.sender, self.recipient, self.contents)
 
+class ConversationLeave(object):
+    """ Message representing user leaving a conversation """
+    def __init__(self, sender, convo):
+        self.convo = convo
+        self.sender = sender
+
+    def get_type(self):
+        return "conv_leave"
+    def jsonify(self):
+        return {"sender": self.sender,
+                "convo": self.convo}
+
 class Conversation(object):
     def __init__(self, title):
         self.participants = set()
@@ -81,12 +93,22 @@ class Conversation(object):
         user.conversations.add(self)
 
     def jsonify(self):
-        return {
-                "title": self.title,
+        return {"title": self.title,
                 "usrs": [pa.uname for pa in self.participants]}
 
     def get_type(self):
         return "conv_create"
+
+    def user_leave(self, user):
+        if user in self.participants:
+            self.participants.remove(user)
+            conv_leave = ConversationLeave(user.uname, self.title)
+
+            for u in self.participants:
+                u.add_event(Event(conv_leave))
+            return True
+        return False
+
     def __repr__(self):
         return "Conversation %s (%s)" %(self.title, ", ".join(map(str, self.participants)))
 

@@ -1,6 +1,5 @@
 import time
 import json
-import uuid
 import re
 
 from threading import Lock
@@ -54,7 +53,8 @@ class Messenger(object):
         if uname in self.users:
             u_obj = self.users[uname]
             for conv in u_obj.conversations:
-                conv.participants.remove(u_obj)
+                conv.leave(u_obj)
+
             del self.users[uname]
             del u_obj
 
@@ -120,5 +120,20 @@ class Messenger(object):
                     u.add_event(Event(msg))
                 return True
 
+        return False
+
+    def conv_leave(self, uname, conv_title):
+        """
+            Removes user from conversation. This is a wrapper around 
+            :meth:`user_leave` of the Conversation object.
+
+            :param uname: String of username of the person to leave
+            :param conv_title: String of conversation title
+            :return: Whether the removal was successful
+        """
+        if conv_title in self.conversations and uname in self.users:
+            u_obj = self.users[uname]
+            conv_obj = self.conversations[conv_title]
+            return conv_obj.user_leave(u_obj)
         return False
 

@@ -72,6 +72,20 @@ def create_group(req, resp):
         resp.write("OK")
     else:
         resp.forbidden()
+
+def leave_group(req, resp):
+    session = session_store.get_store(req)
+    if not "username" in session:
+        resp.forbidden()
+        return
+
+    if req.method == "POST":
+        user = session["username"]
+        conv = req.form["conv"]
+        appdata.conv_leave(user, conv)
+        resp.write("OK")
+    else:
+        resp.forbidden()
     
 def fetch_events(req, resp):
     session = session_store.get_store(req)
@@ -132,5 +146,6 @@ serv.handle("/logout", logout)
 serv.handle("/whoami", whoami)
 
 serv.handle("/newgroup", create_group, methods=["POST"])
+serv.handle("/leave_group", leave_group, methods=["POST"])
 serv.handle("/msg", msg, methods=["POST"])
 serv.handle("/priv_msg", priv_msg, methods=["POST"])

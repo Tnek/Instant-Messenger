@@ -3,7 +3,7 @@ class Conversation {
     this.label = label;
     this.icon = icon;
 
-    this.unread = false;
+    this.unread = 0;
     this.selected = false;
     this.msgs = [];
   }
@@ -12,9 +12,10 @@ class Conversation {
     let icon_status = this.unread ? "unread":"readicon";
     let attrib = this.selected ? "user-li-selected" : "user-li";
 
-    this.ret_element = $(`<li class="clearfix ${attrib}">
+    this.ret_element = $(`
+          <li class="clearfix ${attrib}">
             <div class="about name name-field">
-               <span class="${this.icon} ${icon_status}" /> ${this.label}
+              <span class="${this.icon} ${icon_status}">${this.unread}</span> ${this.label}
             </div> 
           </li>`)
 
@@ -22,18 +23,18 @@ class Conversation {
       this.select();
     }.bind(this));
     return this.ret_element;
-
   }
+
   select() {
     this.ret_element.addClass("user-li-selected");
-    this.unread = false;
+    this.unread = 0;
     this.selected = true;
     messenger.select_conv(this);
   }
 
   unselect() {
     this.ret_element.removeClass("user-li-selected");
-    this.selected = false;
+    this.selected = 0;
   }
 
   add_msg(msg) {
