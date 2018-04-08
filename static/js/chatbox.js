@@ -52,6 +52,7 @@ class ChatBox {
     var rendered_msg;
     var system_message;
 
+    console.log("addmsg", msg);
     switch (msg.type) {
       case "privmsg":
       case "msg":
@@ -63,12 +64,13 @@ class ChatBox {
         break;
 
       case "conv_leave":
-        system_message = {contents: msg.sender + "has left the conversation."};
+        system_message = {contents: msg.sender + " has left the conversation."};
         rendered_msg = this._system_message(system_message);
         break;
 
       case "conv_join":
-        system_message = {contents: msg.sender + "has joined the conversation."};
+        console.log(msg);
+        system_message = {contents: msg.sender + " has joined the conversation."};
         rendered_msg = this._system_message(system_message);
         break;
 

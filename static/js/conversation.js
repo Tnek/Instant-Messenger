@@ -64,6 +64,9 @@ class Channel extends Conversation {
   remove_user(uname) {
     this.users.splice(this.users.indexOf(uname), 1);
   }
+  add_user(uname) {
+    this.users.push(uname);
+  }
 }
 
 class PrivateMessages extends Conversation {

@@ -108,22 +108,27 @@ class Messenger {
   }
 
   handle_event(e) {
+    console.log(e);
     var relevant_conv;
     switch (e.type) {
       case "conv_create":
         let conv = e.event_obj;
-        this.conversations[conv.title] = new Channel(conv.title, conv.usrs);
-        this.conversations[conv.title].unread += 1; 
-
+        relevant_conv = new Channel(conv.title, conv.usrs);
+        this.conversations[conv.title] = relevant_conv; 
         this.render_conversations();
-        this.conversations[conv.title].add_msg(e);
-        return;
+        break;
+
+      case "conv_join":
+        this.conversations[e.event_obj.convo].add_user(e.event_obj.sender);
+        this.chatbox.render_top_panel();
+        relevant_conv = this.conversations[e.event_obj.convo];
+        break;
 
       case "conv_leave":
         this.conversations[e.event_obj.convo].remove_user(e.event_obj.sender);
         this.chatbox.render_top_panel();
-        this.conversations[e.event_obj.convo].add_msg(e);
-        return;
+        relevant_conv = this.conversations[e.event_obj.convo];
+        break;
 
       case "privmsg":
         let target = e.event_obj.recipient == this.whoami() ? 
