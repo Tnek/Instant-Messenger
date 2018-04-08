@@ -43,7 +43,7 @@ class SelectableList extends SearchableItem {
       let build_target = this.target.slice(1);
       return `<div class="form-group">
                 <label class="formHeader" for="${build_input}">Send invites to: </label>
-                <input class="search" id="${build_input}" type="text" placeholder="Search by name" autocomplete="off"/>
+                <input id="${build_input}" type="text" placeholder="Search by name" autocomplete="off"/>
                 <i class="fa fa-search"></i>
               </div>
               <div class="list-group list-group-flush modal-list" id="${build_target}"></div>`
