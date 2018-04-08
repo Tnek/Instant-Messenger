@@ -1,4 +1,4 @@
--To start, run $python app.py
+To start, run $python app.py
 
 
 
