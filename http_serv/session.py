@@ -35,7 +35,8 @@ class Session(dict):
 class Store(object):
     """ 
         Session storage object for getting the Session object of a specific 
-        context.
+        context. Writing to the session value only stages it. To store the 
+        changes, use :meth:`save`
 
         Example usage:
 
@@ -47,6 +48,7 @@ class Store(object):
 
                 # To write to the session:
                 session["username"] = "alice"
+                session.save(req, resp)
 
                 # To read from the session:
                 print(session["username"])
