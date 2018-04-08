@@ -114,23 +114,24 @@ class CreateGroupModal extends Modal {
 }
 
 class PublicConversationModal extends Modal {
-  constructor(target, parent_div) {
+  constructor(target, parent_div, open_element) {
     super(target, parent_div, "Join Public Channel");
     this.search_list = new SelectableList(this.target_sel+'-search', this.target_sel+'-list', this.render.bind(this));
-    $(this.target_sel).on('shown', this.render.bind(this));
+    $(open_element).click(this.render.bind(this));
 
     this.build_body();
     this.build_footer("Join");
     this.render();
     this.submit_callbacks.push(this.join_groups.bind(this));
+    this.close_callbacks.push(this.clear_forms.bind(this));        
   }
 
   join_groups() {
     $.post("/join", {
       conv: Object.keys(this.search_list.selected_items).join("&")
     });
-    $(this.target_sel).modal('hide');
     this.clear_forms();
+    $(this.target_sel).modal('hide');
   }
 
   build_body() {
@@ -144,6 +145,7 @@ class PublicConversationModal extends Modal {
   }
   clear_forms() {
     this.search_list.clear_selected();
+    $(this.target_sel+'-body').empty();
+    this.build_body();
   }
 }
-
