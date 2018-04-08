@@ -93,7 +93,7 @@ class CreateGroupModal extends Modal {
                   <input class="form-control" id=${this.target + "-title"} type="text" autocomplete=off placeholder="Enter title"></input>
                 </div>`)
 
-      this.add_to_body(this.search_list.build());
+      this.add_to_body(this.search_list.build("Send invites to: "));
     }
 
     make_group() {
@@ -109,7 +109,6 @@ class CreateGroupModal extends Modal {
     }
 
     clear_forms() {
-        console.log("clear");
       $(this.titleform).val('');
       this.search_list.clear_selected();
     }
@@ -121,11 +120,20 @@ class PublicConversationModal extends Modal {
     this.search_list = new SelectableList(this.target_sel+'-search', this.target_sel+'-list', this.render.bind(this));
 
 //    this.dom_element.on('shown', this.render.bind(this));
+      
+    this.build_body();
+    this.build_footer("Join");
+    this.render();
   }
+
+  build_body() {
+    this.add_to_body(this.search_list.build("Search public channels"));
+  }
+
   render() {
-/*    $.getJSON("/public_conversations", convs => {
-        this.search_list.render(convs);
-    });*/
+    $.getJSON("/public_conversations", convs => {
+        this.search_list.render(convs.map(c => c.title));
+    });
   }
 }
 

@@ -12,7 +12,7 @@ class Messenger {
     this.pm_bar = new SideBarList("#search-private", "#private-message-list");
 
     this.create_group_modal = new CreateGroupModal("newChatModal", "#people-list", this.render_users_search.bind(this))    
-    this.public_conversations_modal = new PublicConversationModal("publicModal", "body");
+    this.public_conversations_modal = new PublicConversationModal("publicModal", "#people-list");
     this.chatbox = new ChatBox("#chat-history", "#chat-history-ul", "#message-to-send", "#send-button", "#chat-about");
     this.chatbox.bind_events(this.send_message.bind(this));
   }
