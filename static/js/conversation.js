@@ -21,16 +21,20 @@ class Conversation {
           </li>`)
 
     this.ret_element.click(function() {
-      this.select();
+      this._select();
     }.bind(this));
     return this.ret_element;
+  }
+
+  _select() {
+    this.select()
+    messenger.select_conv(this);
   }
 
   select() {
     this.ret_element.addClass("user-li-selected");
     this.unread = 0;
     this.selected = true;
-    messenger.select_conv(this);
   }
 
   unselect() {

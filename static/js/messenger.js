@@ -87,8 +87,13 @@ class Messenger {
     if (this.selected_conversation) {
       this.selected_conversation.unselect();
     }
+
     this.selected_conversation = conversation;
+    this.selected_conversation.select()
     this.chatbox.load_conversation(this.selected_conversation);
+
+    this.render_conversations();
+    this.render_pm();
   }
 
   tick() {
@@ -112,6 +117,9 @@ class Messenger {
 
         this.render_conversations();
         return;
+
+      case "conv_leave":
+        break;
 
       case "privmsg":
         let target = e.event_obj.recipient == this.whoami() ? 
