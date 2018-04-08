@@ -44,9 +44,16 @@ class ChatBox {
     this._add_message(msg);
     this.scrollToBottom();
   }
+  system_message(msg) {
+
+  }
 
   //helper function to add individual messages
   _add_message(msg) {
+    if (msg.type == "system") {
+      this.system_message(msg);
+      return;
+    }
     if (msg.sender == this.whoami) {
       this._my_message(msg);
       return;

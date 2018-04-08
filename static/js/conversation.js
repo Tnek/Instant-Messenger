@@ -11,11 +11,12 @@ class Conversation {
   render() {
     let icon_status = this.unread ? "unread":"readicon";
     let attrib = this.selected ? "user-li-selected" : "user-li";
+    let unread_count = this.unread > 0 ? this.unread : "";
 
     this.ret_element = $(`
           <li class="clearfix ${attrib}">
             <div class="about name name-field">
-              <span class="${this.icon} ${icon_status}">${this.unread}</span> ${this.label}
+              <span class="${this.icon} ${icon_status}">${unread_count}</span> ${this.label}
             </div> 
           </li>`)
 

@@ -108,7 +108,7 @@ class Messenger {
       case "conv_create":
         let conv = e.event_obj;
         this.conversations[conv.title] = new Channel(conv.title, conv.usrs);
-        this.conversations[conv.title].unread = true; 
+        this.conversations[conv.title].unread += 1; 
 
         this.render_conversations();
         return;
@@ -134,7 +134,7 @@ class Messenger {
     relevant_conv.add_msg(msg);
 
     if (e.event_obj.sender != this.whoami()) {
-      relevant_conv.unread = true;
+      relevant_conv.unread += 1;
       this.render_conversations();
       this.render_pms();
 
