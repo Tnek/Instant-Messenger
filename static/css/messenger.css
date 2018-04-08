@@ -285,7 +285,7 @@ a{
   border: solid 1px gray;
 }
 
-#modal-list .active {
+.modal-list .active {
   background-color: gray;
   border-color:darkgray;
 }
@@ -295,3 +295,7 @@ a{
   font-size: 16px;
 }
 
+/*.modal {
+  background-color: #C5DDEB;
+}
+*/
