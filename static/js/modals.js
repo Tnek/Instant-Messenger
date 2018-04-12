@@ -121,6 +121,7 @@ class PublicConversationModal extends Modal {
     this.search_list = new SelectableList(this.target_sel+'-search', this.target_sel+'-list', this.render.bind(this));
     $(this.target_sel).on('shown', this.render.bind(this));
 
+    $("#open_global_channel_modal").click(this.render.bind(this));
     this.build_body();
     this.build_footer("Join");
     this.render();
