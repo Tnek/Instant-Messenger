@@ -88,7 +88,7 @@ class Messenger(object):
 
         for u in users:
             if u in self.users:
-                conv.add_user(self.users[u])
+                conv.silent_add_user(self.users[u])
                 self.users[u].add_event(Event(conv))
             
         return conv

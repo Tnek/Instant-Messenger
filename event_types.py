@@ -96,10 +96,17 @@ class Conversation(object):
         self.public = False
         self.title = title
 
+    def silent_add_user(self, user):
+
+        self.participants_lock.acquire()
+        self.participants.add(user)
+        user.add_conv(self)
+        self.participants_lock.release()
+
     def add_user(self, user):
         self.participants_lock.acquire()
         for u in self.participants:
-            u.add_event(Event(ConversationJoin(user.uname, self.title)))
+             u.add_event(Event(ConversationJoin(user.uname, self.title)))
         self.participants.add(user)
         user.add_conv(self)
         user.add_event(Event(self))
