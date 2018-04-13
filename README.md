@@ -4,7 +4,7 @@
 
 Web Multi-Client Instant Messenger, inspired by Facebook Messenger and Slack
 
-##Installation
+## Installation
 
 ### Download
 
@@ -26,7 +26,7 @@ python app.py
 * [Bootstrap 4.0](https://getbootstrap.com/) - UI Framework
 * [Handlebars.js](https://handlebarsjs.com/) - Templating Engine
 
-###About
+### About
 
 ## Authors
 
@@ -34,5 +34,5 @@ python app.py
 * **Alice Lu** - [zephyllr](https://github.com/zephyllr/)
 
 ## Acknowledgments
-**Leon Chou** - [bleepbloopsify](https://github.com/bleepbloopsify/)
-**Olia Gozha** - https://dribbble.com/OliaGozha
+* Leon Chou - [bleepbloopsify](https://github.com/bleepbloopsify/)
+* Olia Gozha - https://dribbble.com/OliaGozha
