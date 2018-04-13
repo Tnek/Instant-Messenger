@@ -17,7 +17,7 @@ git clone https://github.com/Tnek/Instant-Messenger
 Default port is 8080
 
 ```
-python app.py
+python app.py <port>
 ```
 
 ## Built With
@@ -26,13 +26,13 @@ python app.py
 * [Bootstrap 4.0](https://getbootstrap.com/) - UI Framework
 * [Handlebars.js](https://handlebarsjs.com/) - Templating Engine
 
-### About
+## Credits
 
-## Authors
+### Authors
 
 * **Kent Ma** - [Tnek](https://github.com/Tnek/)
 * **Alice Lu** - [zephyllr](https://github.com/zephyllr/)
 
-## Acknowledgments
+### Acknowledgments
 * Leon Chou - [bleepbloopsify](https://github.com/bleepbloopsify/)
 * Olia Gozha - https://dribbble.com/OliaGozha
